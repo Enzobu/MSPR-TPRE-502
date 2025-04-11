@@ -9,3 +9,18 @@ services:
       - "5000:5000"
     volumes:
       - ./api/src:/app
+
+  ml_dev:
+    build:
+      context: ./dev/app
+      dockerfile: Dockerfile
+    container_name: mspr502_ml_dev
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    volumes:
+      - ./dev/app/src:/app
+    environment:
+      - SPARK_HOME=/opt/spark-3.4.4-bin-hadoop3
+      - PATH=$SPARK_HOME/bin:$PATH
+      - PYTHONPATH=/app
