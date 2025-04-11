@@ -1,6 +1,7 @@
 .vscode/
 *data_files
 *_pycache__
+__pycache__/
 *java_opts.txt
 *.log
 .venv/
