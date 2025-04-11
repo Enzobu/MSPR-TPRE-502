@@ -44,3 +44,21 @@ services:
       retries: 5
     volumes:
       - pg-data:/var/lib/postgresql/data
+
+  pgadmin4:
+    build:
+      context: ./pg_admin
+      dockerfile: Dockerfile
+    container_name: mspr501_pg_admin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: s5t4v5
+    ports:
+      - "7080:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pg-data:
