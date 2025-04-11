@@ -1,0 +1,11 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: mspr502_api_flask
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./api/src:/app
