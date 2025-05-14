@@ -1,0 +1,61 @@
+.globalContainer {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    transition: ease .3s all;
+    background-color: rgb(238, 238, 238);
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.inputContainer label {
+    font-weight: bold;
+}
+
+.inputContainer input {
+    font-size: 1rem;
+    padding: .5rem;
+    padding-left: 0;
+    border: none;
+    border-bottom: solid 1px rgb(184, 184, 184);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: ease .3s all;
+}
+
+.inputContainer input::placeholder {
+    color: #dcdcdc;
+}
+
+.inputContainer input:focus {
+    outline: none;
+    border-bottom: solid 1px #047BB2;
+    color: #047BB2;
+}
+
+.detailsWrapper {
+    padding-top: 2rem;
+    display: flex;
+}
+
+.credentialWrapper {
+    padding-bottom: 2rem;
+    display: flex;
+
+}
+
+@media (max-width : 550px) {
+    .detailsWrapper, .credentialWrapper {
+        flex-direction: column;
+    }
+    .globalContainer {
+        width: 100%;
+    }
+}
