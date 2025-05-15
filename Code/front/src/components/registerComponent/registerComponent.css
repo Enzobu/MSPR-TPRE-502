@@ -3,17 +3,14 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 75%;
     transition: ease .3s all;
-    background-color: rgb(238, 238, 238);
 }
 
 .inputContainer {
     display: flex;
     flex-direction: column;
-    margin: 1rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 1rem 0;
 }
 
 .inputContainer label {
@@ -23,11 +20,11 @@
 .inputContainer input {
     font-size: 1rem;
     padding: .5rem;
-    padding-left: 0;
-    border: none;
-    border-bottom: solid 1px rgb(184, 184, 184);
+    border: solid 1px rgb(191, 191, 191);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     transition: ease .3s all;
+    border-radius: 10px;
+    margin-top: .5rem;
 }
 
 .inputContainer input::placeholder {
@@ -35,9 +32,11 @@
 }
 
 .inputContainer input:focus {
-    outline: none;
-    border-bottom: solid 1px #047BB2;
-    color: #047BB2;
+    border: solid 1px #047bb2;
+}
+
+.inputContainer input:hover {
+    border: solid 1px #047bb2;
 }
 
 .detailsWrapper {

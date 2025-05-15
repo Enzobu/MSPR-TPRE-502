@@ -1,37 +1,47 @@
 import { useState } from "react"
 import "./loginPage.css"
 import analyseLogo from "../../assets/analyze-it-logo.png"
-import whoBackground from "../../assets/who-background.jpg"
+import whoBackground from "../../assets/who_background.jpg"
 import LoginComponent from "../../components/loginComponent/loginComponent"
 import RegisterComponent from "../../components/registerComponent/registerComponent"
 
 
-
-
-
 function LoginPage() {
-
-
 
     const [module, setModule] = useState("register")
 
     return (
         <div className="loginPageWrapper">
-            <div className="loginContainer">
-                <img  className="logo" src={analyseLogo} alt="Analyze it logo" />
-                <div className="moduleChoice">
-                    <h1 className={module === "register" ? "selected" : ""} onClick={() => setModule("register")}>S'inscrire</h1>
-                    <h1 className={module === "login" ? "selected" : ""} onClick={() => setModule("login")}>Se connecter</h1>
+            <form onSubmit={() => { console.log("kikou");
+            }} className="formContainer">
+                <div className="loginContainer">
+                    <div className="logo">
+                        <img src={analyseLogo} alt="Analyze it logo" />
+                        <h3>{module === "login" ? "Welcome back" : "Getting started now"}</h3>
+                    </div>
+
+
+                    {module === "register" && (<RegisterComponent />)}
+                    {module === "login" && (<LoginComponent />)}
+
+                    <button type="submit" className="loginCTA">{module === "login" ? "Sign In" : "Sign Up"}</button>
+
+                    <hr />
+
+                    <div className="loginSwitch">
+                        {module === "login" && (<p><b>Not registered yet? : </b>
+                            <span onClick={() => setModule("register")}>Register</span></p>)}
+
+                        {module === "register" && (<p><b>Already registered? : </b>
+                            <span onClick={() => setModule("login")}>Log in</span></p>)}
+                    </div>
                 </div>
-
-                {module === "register" && (<RegisterComponent />)}
-                {module === "login" && (<LoginComponent />)}
-
-                <h1 className="loginCTA">{module === "login" ? "Je me connecte" : "Je m'inscrit"}</h1>
-            </div>
+            </form>
             <div className="whoBackground">
-                <img src={whoBackground} alt="" />
+                <img src={whoBackground} alt="Who background image" />
             </div>
+
+
         </div>
 
     )
