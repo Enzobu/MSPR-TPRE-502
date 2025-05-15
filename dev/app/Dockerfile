@@ -21,7 +21,11 @@ RUN pip3 install pyspark  \
     kagglehub \
     pylint \
     psycopg2 \
-    pandas
+    pandas \
+    prophet \
+    pystan \
+    plotly \
+    joblib
 
 WORKDIR /app
 
