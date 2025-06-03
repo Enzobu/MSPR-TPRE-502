@@ -17,8 +17,6 @@ user_model = user_namespace.model('User', {
 
 # Modele login (email + password)
 login_model = user_namespace.model('Login', {
-    'firstname': fields.String(required=True, description='Prénom'),
-    'lastname': fields.String(required=True, description='Nom'),
     'email': fields.String(required=True, description="Adresse email de l'utilisateur"),
     'password': fields.String(required=True, description='Mot de passe')
 })
@@ -60,7 +58,7 @@ class LoginResource(Resource):
                 hashed_password = user[1]
 
                 if bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
-                    access_token = create_access_token(identity=str(user[0]))  # on identifie par id user ici
+                    access_token = create_access_token(identity=str(user[0]))
                     return {'access_token': access_token}, 200
                 else:
                     return {'msg': "Mot de passe incorrect"}, 401
