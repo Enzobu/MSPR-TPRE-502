@@ -22,7 +22,6 @@
 
 WITH max_values AS (
   SELECT
-    MAX(s.confirmed) AS max_confirmed,
     MAX(s.deaths) AS max_deaths,
     MAX(c.population) AS max_population,
     MAX(c.pib) AS max_pib
@@ -36,11 +35,11 @@ WITH max_values AS (
 
 SELECT
   s._date AS ds,
-  s.confirmed / NULLIF(m.max_confirmed, 0) AS y,
-  s.deaths / NULLIF(m.max_deaths, 0) AS deaths,
-  c.population / NULLIF(m.max_population, 0) AS population,
-  c.pib / NULLIF(m.max_pib, 0) AS pib,
-  d.is_pandemic
+  s.confirmed AS y,
+  s.deaths::float / NULLIF(m.max_deaths, 0) AS deaths,
+  c.population::float / NULLIF(m.max_population, 0) AS population,
+  c.pib::float / NULLIF(m.max_pib, 0) AS pib,
+  c.name as country_name
 FROM
   public.statement s
 JOIN

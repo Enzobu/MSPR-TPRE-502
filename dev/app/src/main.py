@@ -5,7 +5,7 @@ from db.connection import get_connection    # type: ignore
 import joblib                               # type: ignore
 import matplotlib.pyplot as plt             # type: ignore
 import common.utils as utils
-
+import os
 
 query = utils.read_sql_query('./query/query.sql')
 
@@ -14,38 +14,50 @@ df = pd.read_sql_query(query, conn)
 conn.close()
 
 df = df.rename(columns={'_date': 'ds', 'confirmed': 'y'})
-
-colonnes_numeriques = [
-    'population',
-    'pib',
-    'deaths',
-    'is_pandemic',
-]
-
-df = df[['ds', 'y'] + colonnes_numeriques].copy()
+colonnes_numeriques = ['population', 'pib', 'deaths']
+df = df[['ds', 'y', 'country_name'] + colonnes_numeriques].copy()
 
 df = df[df['y'].notna()]
 df = df[df['y'] > 0]
 
-print(df.head())
+os.makedirs("models", exist_ok=True)
+os.makedirs("predictions", exist_ok=True)
+os.makedirs("plots", exist_ok=True)
 
-model = Prophet()
-for reg in colonnes_numeriques:
-    model.add_regressor(reg)
+for country in df['country_name'].unique():
+    print(f"▶ Traitement du pays : {country}")
 
-model.fit(df)
+    df_country = df[df['country_name'] == country].copy()
 
-future = model.make_future_dataframe(periods=90)
+    if len(df_country) < 10:
+        print(f"Trop peu de données pour {country}, on skip.")
+        continue
 
-for col in colonnes_numeriques:
-    future[col] = df[col].iloc[-1]
 
-forecast = model.predict(future)
+    model = Prophet()
+    for reg in colonnes_numeriques:
+        model.add_regressor(reg)
 
-print(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']])
+    model.fit(df_country)
 
-fig = model.plot(forecast)
-plt.show()
+    future = model.make_future_dataframe(periods=90)
 
-joblib.dump(model, 'prophet_model.pkl')
-forecast.to_csv('forecast_predictions.csv', index=False)
+    for col in colonnes_numeriques:
+        future[col] = df_country[col].iloc[-1]
+
+    forecast = model.predict(future)
+    forecast['yhat'] = forecast['yhat'].clip(lower=0)
+
+    print(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']])
+
+    safe_country_name = country.replace(" ", "_").replace("/", "_")
+    joblib.dump(model, f"models/prophet_model_{safe_country_name}.pkl")
+    forecast.to_csv(f"predictions/forecast_{safe_country_name}.csv", index=False)
+
+    fig = model.plot(forecast)
+    fig.savefig(f"plots/forecast_plot_{safe_country_name}.png")
+    plt.close(fig)
+
+    print(f"Modèle sauvegardé pour {country}.")
+
+print("Tous les modèles sont générés.")
