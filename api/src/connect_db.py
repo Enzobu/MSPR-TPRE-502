@@ -19,7 +19,7 @@ import psycopg2  # type: ignore
 
 
 DATABASE = {
-    "host": "enzo-palermo.com",
+    "host": "qg.enzo-palermo.com",
     "database": "mspr502",
     "user": "mspr502",
     "password": "s5t4v5",
