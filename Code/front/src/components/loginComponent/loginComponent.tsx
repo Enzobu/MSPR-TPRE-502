@@ -8,7 +8,7 @@ const fetchLogin = async (
 ): Promise<string | null> => {
   try {
     const res = await fetch(
-      "http://enzo-palermo.com:5001/swagger/users/login",
+      "http://qg.enzo-palermo.com:5001/swagger/users/login",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -6,6 +6,7 @@ import "./profilePage.css";
 import Informations from "../../components/profileDetails/profileDetails";
 import MotDePasse from "../../components/passwordDetails/passwordDetails";
 import Parametres from "../../components/settingsComponent/settingsComponent";
+import AllUsers from "../../components/allUsers/allUsers";
 
 const ProfilPage = () => {
   const [activeSection, setActiveSection] = useState("Informations");
@@ -25,6 +26,8 @@ const ProfilPage = () => {
         return <MotDePasse />;
       case "Paramètres":
         return <Parametres />;
+      case "Utilisateurs":
+        return <AllUsers />;
       default:
         return null;
     }
@@ -44,7 +47,12 @@ const ProfilPage = () => {
 
           <div>
             <ul>
-              {["Informations", "Mot de passe", "Paramètres"].map((item) => (
+              {[
+                "Informations",
+                "Mot de passe",
+                "Paramètres",
+                "Utilisateurs",
+              ].map((item) => (
                 <li
                   key={item}
                   className={activeSection === item ? "active" : ""}

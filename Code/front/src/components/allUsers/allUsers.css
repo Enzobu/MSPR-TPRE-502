@@ -1,0 +1,73 @@
+.usersSection {
+  width: 100%;
+  max-width: 900px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.usersSection h2 {
+  font-size: 1.8rem;
+  color: #009DE1;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.userTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.userTable th,
+.userTable td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.userTable th {
+  background-color: #e6f3fa;
+  color: #007bb8;
+  font-weight: 600;
+}
+
+.userTable tr:hover {
+  background-color: #f0f8ff;
+}
+
+@media (max-width: 600px) {
+  .userTable thead {
+    display: none;
+  }
+
+  .userTable, .userTable tbody, .userTable tr, .userTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .userTable tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: white;
+  }
+
+  .userTable td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .userTable td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    top: 0.75rem;
+    font-weight: bold;
+    text-align: left;
+    color: #666;
+  }
+}
