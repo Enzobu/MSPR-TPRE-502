@@ -1,0 +1,60 @@
+.globalContainer {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: ease .3s all;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 1rem 0;
+}
+
+.inputContainer label {
+    font-weight: bold;
+}
+
+.inputContainer input {
+    font-size: 1rem;
+    padding: .5rem;
+    border: solid 1px rgb(191, 191, 191);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: ease .3s all;
+    border-radius: 10px;
+    margin-top: .5rem;
+}
+
+.inputContainer input::placeholder {
+    color: #dcdcdc;
+}
+
+.inputContainer input:focus {
+    border: solid 1px #047bb2;
+}
+
+.inputContainer input:hover {
+    border: solid 1px #047bb2;
+}
+
+.detailsWrapper {
+    padding-top: 2rem;
+    display: flex;
+}
+
+.credentialWrapper {
+    padding-bottom: 2rem;
+    display: flex;
+
+}
+
+@media (max-width : 550px) {
+    .detailsWrapper, .credentialWrapper {
+        flex-direction: column;
+    }
+    .globalContainer {
+        width: 100%;
+    }
+}
