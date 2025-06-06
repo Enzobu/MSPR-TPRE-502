@@ -1,7 +1,8 @@
 import sys
 import bcrypt                                                                                   # type: ignore
 from flask import Flask, request, jsonify                                                       # type: ignore
-from flask_restx import Api                                                                     # type: ignore
+from flask_restx import Api                  
+from flask_cors import CORS                                                                     # type: ignore
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity  # type: ignore
 from controller import climat_type_controller, continent_controller, country_climat_type_controller
 from controller import country_controller, disease_controller, region_controller, statement_controller
@@ -21,6 +22,7 @@ hashed_password = hash_password(password_to_hash)
 print(f"Mot de passe haché : {hashed_password}")
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['JWT_SECRET_KEY'] = 'votre_clé_secrète_super_sécurisée'
 jwt = JWTManager(app)
@@ -54,7 +56,8 @@ api.add_namespace(country_climat_type_controller.country_climat_type_namespace, 
 api.add_namespace(disease_controller.disease_namespace, path='/swagger')
 api.add_namespace(region_controller.region_namespace, path='/swagger')
 api.add_namespace(statement_controller.statement_namespace, path='/swagger')
-api.add_namespace(login_controller.auth_namespace, path='/swagger')
+api.add_namespace(login_controller.user_namespace, path='/swagger')
+api.add_namespace(login_controller.user_namespace, path='/swagger')
 
 db_connection = get_db_connection()
 if not db_connection:

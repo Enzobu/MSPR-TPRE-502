@@ -19,7 +19,13 @@ RUN pip3 install pyspark  \
     python-dotenv \
     country_converter \
     kagglehub \
-    pylint
+    pylint \
+    psycopg2 \
+    pandas \
+    prophet \
+    pystan \
+    plotly \
+    joblib
 
 WORKDIR /app
 
