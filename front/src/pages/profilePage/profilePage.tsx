@@ -7,11 +7,13 @@ import Informations from "../../components/profileDetails/profileDetails";
 import MotDePasse from "../../components/passwordDetails/passwordDetails";
 import Parametres from "../../components/settingsComponent/settingsComponent";
 import AllUsers from "../../components/allUsers/allUsers";
+import useLoggedUser from "../../hooks/useLoggedUser";
 
 const ProfilPage = () => {
   const [activeSection, setActiveSection] = useState("Informations");
   const signOut = useSignOut();
   const navigate = useNavigate();
+  const { user, loading, error } = useLoggedUser(); // <-- on utilise le hook
 
   const handleLogout = () => {
     signOut();
@@ -27,11 +29,21 @@ const ProfilPage = () => {
       case "Paramètres":
         return <Parametres />;
       case "Utilisateurs":
-        return <AllUsers />;
+        return user?.isAdmin ? <AllUsers /> : <p>Accès refusé</p>;
       default:
         return null;
     }
   };
+
+  const menuItems = [
+    "Informations",
+    "Mot de passe",
+    "Paramètres",
+    ...(user?.isAdmin ? ["Utilisateurs"] : []),
+  ];
+
+  if (loading) return <p>Chargement...</p>;
+  if (error) return <p style={{ color: "red" }}>Erreur : {error}</p>;
 
   return (
     <div className="pageContainer">
@@ -47,12 +59,7 @@ const ProfilPage = () => {
 
           <div>
             <ul>
-              {[
-                "Informations",
-                "Mot de passe",
-                "Paramètres",
-                "Utilisateurs",
-              ].map((item) => (
+              {menuItems.map((item) => (
                 <li
                   key={item}
                   className={activeSection === item ? "active" : ""}
@@ -63,12 +70,14 @@ const ProfilPage = () => {
               ))}
             </ul>
           </div>
+
           <div className="logoutButtonContainer">
             <button onClick={handleLogout} className="logoutButton">
               Se déconnecter
             </button>
           </div>
         </aside>
+
         <div className="mainProfile">{renderSection()}</div>
       </section>
     </div>

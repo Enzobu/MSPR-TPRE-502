@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./profileDetails.css";
 import { decodeToken } from "react-jwt";
-import { Link } from "react-router-dom";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 interface DecodedToken {
@@ -19,7 +18,7 @@ interface User {
   lastname: string;
   firstname: string;
   email: string;
-  role: string;
+  isAdmin: boolean;
 }
 
 export function Profile() {
@@ -48,9 +47,12 @@ export function Profile() {
             "Erreur lors de la récupération des données utilisateur"
           );
         }
+        
         return res.json();
       })
       .then((data) => {
+        console.log(data);
+        
         setUserLogged(data);
       })
       .catch((err) => {
@@ -79,7 +81,7 @@ export function Profile() {
           </p>
           <p>
             <span>RÔLE : </span>
-            {userLogged.role}
+            {userLogged.isAdmin === true ? "Administrateur" : "Utilisateur"}
           </p>
         </div>
       </div>
