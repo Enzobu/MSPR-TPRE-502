@@ -1,18 +1,18 @@
-FROM apache/spark-py:v3.4.0
+FROM python:3.10-slim
 
 USER root
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 \
-    python3-pip \
     curl \
     libpq-dev \
     wget \
-    nano && \
-    apt-get clean && \
+    nano \
+    gcc \
+    build-essential \
+    && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install pyspark  \
+RUN pip3 install --no-cache-dir \
     matplotlib  \
     requests \
     psycopg2-binary \
@@ -30,12 +30,11 @@ RUN pip3 install pyspark  \
 WORKDIR /app
 
 RUN wget https://jdbc.postgresql.org/download/postgresql-42.6.0.jar && \
-    mkdir -p /opt/spark/jars && \
-    mv postgresql-42.6.0.jar /opt/spark/jars/
+    mkdir -p /opt/jars && \
+    mv postgresql-42.6.0.jar /opt/jars/
 
 RUN echo "alias ll='ls -al'" >> /root/.bashrc && \
-    echo "export PATH=$PATH:/app/bin/" >> /root/.bashrc && \
-    echo "export PYTHONPATH=/app" >> /root/.bashrc && \
-    echo "SPARK_HOME=/opt/spark/" >> /root/.bashrc
+    echo "export PATH=\$PATH:/app/bin/" >> /root/.bashrc && \
+    echo "export PYTHONPATH=/app" >> /root/.bashrc
 
 CMD ["tail", "-f", "/dev/null"]
