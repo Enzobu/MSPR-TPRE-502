@@ -1,0 +1,142 @@
+.usersSection {
+  width: 100%;
+  max-width: 900px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.usersSection h2 {
+  font-size: 1.8rem;
+  color: #009DE1;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.userTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.userTable th,
+.userTable td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.userTable th {
+  background-color: #e6f3fa;
+  color: #007bb8;
+  font-weight: 600;
+}
+
+.userTable tr:hover {
+  background-color: #f0f8ff;
+}
+
+.userForm {
+  margin-top: 2rem;
+  padding: 1.5rem 2rem;
+  background-color: #f9fdff;
+  border: 1px solid #cce7f5;
+  border-radius: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 8px rgba(0, 157, 225, 0.1);
+}
+
+.userForm h3 {
+  font-size: 1.4rem;
+  color: #009DE1;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.userForm input[type="text"],
+.userForm input[type="email"],
+.userForm input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #cce7f5;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background-color: #fff;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.userForm input:focus {
+  border-color: #009DE1;
+  outline: none;
+}
+
+.userForm label {
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.userForm button[type="submit"] {
+  background-color: #009DE1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.userForm button[type="submit"]:hover {
+  background-color: #007bb8;
+}
+
+.userForm p {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+
+@media (max-width: 600px) {
+  .userTable thead {
+    display: none;
+  }
+
+  .userTable, .userTable tbody, .userTable tr, .userTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .userTable tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: white;
+  }
+
+  .userTable td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .userTable td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    top: 0.75rem;
+    font-weight: bold;
+    text-align: left;
+    color: #666;
+  }
+}
