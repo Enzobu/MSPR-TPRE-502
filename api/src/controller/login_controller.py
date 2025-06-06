@@ -13,6 +13,16 @@ user_model = user_namespace.model('User', {
     'lastname': fields.String(required=True, description='Nom'),
     'email': fields.String(required=True, description='Adresse email'),
     'password': fields.String(required=True, description='Mot de passe (non retourne dans les reponses)'),
+    'isAdmin': fields.Boolean(default=False, description='Indique si l\'utilisateur est un administrateur')
+})
+
+user_by_id_model = user_namespace.model('User', {
+    'id_user': fields.Integer(readonly=True, description='ID de l\'utilisateur'),
+    'firstname': fields.String(required=True, description='Prénom'),
+    'lastname': fields.String(required=True, description='Nom'),
+    'email': fields.String(required=True, description='Adresse email'),
+    'password': fields.String(required=True, description='Mot de passe (non retourne dans les reponses)'),
+    'isAdmin': fields.Boolean(required=False, description='Indique si l\'utilisateur est un administrateur')
 })
 
 # Modele login (email + password)
@@ -25,6 +35,14 @@ login_model = user_namespace.model('Login', {
 token_model = user_namespace.model('Token', {
     'access_token': fields.String(description="Token JWT d'authentification")
 })
+
+def check_if_admin():
+    with DBConnection() as conn:
+        cur = conn.cursor()
+        user_id = get_jwt_identity()
+        cur.execute("SELECT isAdmin FROM users WHERE id_user = %s", (user_id,))
+        user = cur.fetchone()
+        return user and user[0] is True
 
 @user_namespace.route('/users/login')
 class LoginResource(Resource):
@@ -73,13 +91,17 @@ class UserListResource(Resource):
     @user_namespace.response(200, 'Succes')
     @user_namespace.response(500, 'Erreur serveur')
     def get(self):
+
+        if not check_if_admin():
+            return {'msg': "Accès refusé : administrateur requis"}, 403
+
         """Recuperer la liste de tous les utilisateurs (sans les passwords)"""
         try:
             with DBConnection() as conn:
                 cur = conn.cursor()
-                cur.execute("SELECT id_user, firstname, lastname, email FROM users")
+                cur.execute("SELECT id_user, firstname, lastname, email, isAdmin FROM users")
                 users = cur.fetchall()
-                users_list = [{'id_user': user[0], 'firstname': user[1], 'lastname': user[2], 'email': user[3]} for user in users]
+                users_list = [{'id_user': user[0], 'firstname': user[1], 'lastname': user[2], 'email': user[3], 'isAdmin': user[4]} for user in users]
                 return users_list, 200
         except Exception as e:
             return {'msg': f"Erreur serveur : {str(e)}"}, 500
@@ -99,8 +121,9 @@ class UserListResource(Resource):
             lastname = data.get('lastname')
             email = data.get('email')
             password = data.get('password')
+            isAdmin = data.get('isAdmin')
 
-            if not firstname or not lastname or not email or not password:
+            if not firstname or not lastname or not email or not password or not isinstance(isAdmin, bool):
                 return {'msg': "Veuillez respecter la structure de la table"}, 400
 
             # Hashage du mot de passe
@@ -113,19 +136,19 @@ class UserListResource(Resource):
                 if cur.fetchone():
                     return {'msg': "Email dejà utilise"}, 400
 
-                cur.execute("INSERT INTO users (firstname, lastname, email, password) VALUES (%s, %s, %s, %s) RETURNING id_user",
-                            (firstname, lastname, email, hashed_password))
+                cur.execute("INSERT INTO users (firstname, lastname, email, password, isAdmin) VALUES (%s, %s, %s, %s, %s) RETURNING id_user",
+                            (firstname, lastname, email, hashed_password, isAdmin))
                 new_id = cur.fetchone()[0]
                 conn.commit()
 
-            return {'id_user': new_id, 'firstname': firstname, 'lastname': lastname, 'email': email}, 201
+            return {'id_user': new_id, 'firstname': firstname, 'lastname': lastname, 'email': email, 'isAdmin': isAdmin}, 201
         except Exception as e:
             return {'msg': f"Erreur serveur : {str(e)}"}, 500
 
 @user_namespace.route('/users/<int:user_id>')
 class UserResource(Resource):
     @jwt_required()
-    @user_namespace.marshal_with(user_model, skip_none=True)
+    @user_namespace.marshal_with(user_by_id_model, skip_none=True)
     @user_namespace.response(200, 'Succes')
     @user_namespace.response(404, 'Utilisateur non trouve')
     @user_namespace.response(500, 'Erreur serveur')
@@ -134,11 +157,11 @@ class UserResource(Resource):
         try:
             with DBConnection() as conn:
                 cur = conn.cursor()
-                cur.execute("SELECT id_user, firstname, lastname, email FROM users WHERE id_user = %s", (user_id,))
+                cur.execute("SELECT id_user, firstname, lastname, email, isAdmin FROM users WHERE id_user = %s", (user_id,))
                 user = cur.fetchone()
                 if not user:
                     return {'msg': "Utilisateur non trouve"}, 404
-                return {'id_user': user[0], 'firstname': user[1], 'lastname': user[2], 'email': user[3]}, 200
+                return {'id_user': user[0], 'firstname': user[1], 'lastname': user[2], 'email': user[3], 'isAdmin': user[4]}, 200
         except Exception as e:
             return {'msg': f"Erreur serveur : {str(e)}"}, 500
 
@@ -149,7 +172,7 @@ class UserResource(Resource):
     @user_namespace.response(404, 'Utilisateur non trouve')
     @user_namespace.response(500, 'Erreur serveur')
     def put(self, user_id):
-        """Mettre à jour un utilisateur (firstname, lastname, email et/ou mot de passe)"""
+        """Mettre à jour un utilisateur (firstname, lastname, email, isAdmin et/ou mot de passe)"""
         try:
             data = request.get_json()
             if not data or not isinstance(data, dict):
@@ -159,9 +182,10 @@ class UserResource(Resource):
             lastname = data.get('lastname')
             email = data.get('email')
             password = data.get('password')
+            isAdmin = data.get('isAdmin')
 
-            if not firstname or  not lastname or not email and not password:
-                return {'msg': "Au moins un champ (firstname, lastname, email ou password) requis"}, 400
+            if not firstname or  not lastname or not email and not password or not isinstance(isAdmin, bool):
+                return {'msg': "Au moins un champ (firstname, lastname, email, password ou isAdmin) requis"}, 400
 
             with DBConnection() as conn:
                 cur = conn.cursor()
@@ -199,6 +223,10 @@ class UserResource(Resource):
                 if lastname:
                     update_fields.append("lastname = %s")
                     update_values.append(lastname)
+
+                if isAdmin:
+                    update_fields.append("isAdmin = %s")
+                    update_values.append(isAdmin)
 
                 if update_fields:
                     update_values.append(user_id)
