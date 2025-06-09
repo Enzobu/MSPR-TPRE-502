@@ -4,7 +4,7 @@ import { decodeToken } from "react-jwt";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
 export interface User {
-  id: number;
+  id_user: number;
   lastname: string;
   firstname: string;
   email: string;

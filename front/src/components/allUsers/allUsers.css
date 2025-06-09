@@ -7,7 +7,7 @@
 
 .usersSection h2 {
   font-size: 1.8rem;
-  color: #009DE1;
+  color: #009de1;
   margin-bottom: 1.5rem;
   font-weight: 500;
   text-align: center;
@@ -24,7 +24,7 @@
 .userTable td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #ddd;
-  text-align: left;
+  text-align: center;
 }
 
 .userTable th {
@@ -51,7 +51,7 @@
 
 .userForm h3 {
   font-size: 1.4rem;
-  color: #009DE1;
+  color: #009de1;
   font-weight: 500;
   margin-bottom: 1rem;
   text-align: center;
@@ -71,7 +71,7 @@
 }
 
 .userForm input:focus {
-  border-color: #009DE1;
+  border-color: #009de1;
   outline: none;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .userForm button[type="submit"] {
-  background-color: #009DE1;
+  background-color: #009de1;
   color: white;
   border: none;
   padding: 0.75rem 1.25rem;
@@ -99,19 +99,37 @@
   background-color: #007bb8;
 }
 
+.userForm button[type="button"] {
+  background-color: #009de1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  margin: 0 0.75rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.userForm button[type="button"]:hover {
+  background-color: #007bb8;
+}
+
 .userForm p {
   margin-top: 0.5rem;
   text-align: center;
   font-size: 0.9rem;
 }
 
-
 @media (max-width: 600px) {
   .userTable thead {
     display: none;
   }
 
-  .userTable, .userTable tbody, .userTable tr, .userTable td {
+  .userTable,
+  .userTable tbody,
+  .userTable tr,
+  .userTable td {
     display: block;
     width: 100%;
   }
