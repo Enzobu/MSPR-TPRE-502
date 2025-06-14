@@ -228,6 +228,13 @@ const AllUsers = () => {
             setEditingUser(null);
             setMode("list");
           }}
+          onUpdate={(updatedUser) => {
+            setUsers((prevUsers) =>
+              prevUsers.map((u) =>
+                u.id_user === updatedUser.id_user ? updatedUser : u
+              )
+            );
+          }}
         />
       )}
     </div>

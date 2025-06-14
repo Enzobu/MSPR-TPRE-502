@@ -10,24 +10,39 @@ interface EditUserFormProps {
     isAdmin: boolean;
   };
   onClose: () => void;
+  onUpdate: (updated: {
+    id_user: number;
+    firstname: string;
+    lastname: string;
+    email: string;
+    isAdmin: boolean;
+  }) => void;
 }
 
-const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
+
+const EditUserForm = ({ user, onClose, onUpdate }: EditUserFormProps) => {
   const [formData, setFormData] = useState<UserForm>({
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
-    password: "", // on peut le laisser vide si non changé
     isAdmin: user.isAdmin,
   });
 
   const { updateUser, loading, error, updatedUserId } = useUpdateUser();
 
-  useEffect(() => {
-    if (updatedUserId === user.id_user) {
-      onClose(); // fermer le formulaire après succès
-    }
-  }, [updatedUserId]);
+useEffect(() => {
+  if (updatedUserId === user.id_user) {
+    onUpdate({
+      id_user: user.id_user,
+      firstname: formData.firstname,
+      lastname: formData.lastname,
+      email: formData.email,
+      isAdmin: formData.isAdmin,
+    });
+    onClose();
+  }
+}, [updatedUserId]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -48,12 +63,6 @@ const EditUserForm = ({ user, onClose }: EditUserFormProps) => {
       <input name="firstname" type="text" value={formData.firstname} onChange={handleChange} />
       <input name="lastname" type="text" value={formData.lastname} onChange={handleChange} />
       <input name="email" type="email" value={formData.email} onChange={handleChange} />
-      <input
-        name="password"
-        type="password"
-        value={formData.password}
-        onChange={handleChange}
-      />
       <label>
         Admin :
         <input name="isAdmin" type="checkbox" checked={formData.isAdmin} onChange={handleChange} />

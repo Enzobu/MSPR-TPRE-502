@@ -5,7 +5,6 @@ export interface UserForm {
   firstname: string;
   lastname: string;
   email: string;
-  password: string;
   isAdmin: boolean;
 }
 
