@@ -168,24 +168,25 @@ class UserResource(Resource):
     @jwt_required()
     @user_namespace.expect(user_model)
     @user_namespace.response(200, 'Utilisateur mis à jour')
-    @user_namespace.response(400, 'Donnees invalides')
-    @user_namespace.response(404, 'Utilisateur non trouve')
+    @user_namespace.response(400, 'Données invalides')
+    @user_namespace.response(404, 'Utilisateur non trouvé')
     @user_namespace.response(500, 'Erreur serveur')
     def put(self, user_id):
-        """Mettre à jour un utilisateur (firstname, lastname, email, isAdmin et/ou mot de passe)"""
+        """Mettre à jour un utilisateur partiellement"""
         try:
             data = request.get_json()
             if not data or not isinstance(data, dict):
-                return {'msg': "Donnees invalides"}, 400
+                return {'msg': "Données invalides"}, 400
 
-            firstname = data.get('firstname')
-            lastname = data.get('lastname')
-            email = data.get('email')
-            password = data.get('password')
-            isAdmin = data.get('isAdmin')
+            fields_to_update = {}
+            allowed_fields = ['firstname', 'lastname', 'email', 'password', 'isAdmin']
 
-            if not firstname or  not lastname or not email and not password or not isinstance(isAdmin, bool):
-                return {'msg': "Au moins un champ (firstname, lastname, email, password ou isAdmin) requis"}, 400
+            for field in allowed_fields:
+                if field in data:
+                    fields_to_update[field] = data[field]
+
+            if not fields_to_update:
+                return {'msg': "Aucun champ à mettre à jour"}, 400
 
             with DBConnection() as conn:
                 cur = conn.cursor()
@@ -195,46 +196,33 @@ class UserResource(Resource):
                 if not cur.fetchone():
                     return {'msg': "Utilisateur non trouvé"}, 404
 
-                if email:
-                    # Vérifier si email déjà utilisé par un autre utilisateur
-                    cur.execute("SELECT id_user FROM users WHERE email = %s AND id_user != %s", (email, user_id))
+                # Vérifier email déjà utilisé
+                if 'email' in fields_to_update:
+                    cur.execute("SELECT id_user FROM users WHERE email = %s AND id_user != %s",
+                                (fields_to_update['email'], user_id))
                     if cur.fetchone():
                         return {'msg': "Email déjà utilisé"}, 400
 
-                if password:
-                    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                # Hacher le mot de passe si présent
+                if 'password' in fields_to_update:
+                    fields_to_update['password'] = bcrypt.hashpw(
+                        fields_to_update['password'].encode('utf-8'), bcrypt.gensalt()
+                    ).decode('utf-8')
 
-                # Construction de la requête dynamique
-                update_fields = []
+                # Générer dynamiquement la requête SQL
+                update_clauses = []
                 update_values = []
+                for key, value in fields_to_update.items():
+                    update_clauses.append(f"{key} = %s")
+                    update_values.append(value)
 
-                if email:
-                    update_fields.append("email = %s")
-                    update_values.append(email)
+                update_values.append(user_id)
+                query = f"UPDATE users SET {', '.join(update_clauses)} WHERE id_user = %s"
+                cur.execute(query, tuple(update_values))
+                conn.commit()
 
-                if hashed_password:
-                    update_fields.append("password = %s")
-                    update_values.append(hashed_password)
+            return {'msg': "Utilisateur mis à jour"}, 200
 
-                if firstname:
-                    update_fields.append("firstname = %s")
-                    update_values.append(firstname)
-
-                if lastname:
-                    update_fields.append("lastname = %s")
-                    update_values.append(lastname)
-
-                if isAdmin:
-                    update_fields.append("isAdmin = %s")
-                    update_values.append(isAdmin)
-
-                if update_fields:
-                    update_values.append(user_id)
-                    query = f"UPDATE users SET {', '.join(update_fields)} WHERE id_user = %s"
-                    cur.execute(query, tuple(update_values))
-                    conn.commit()
-
-                return {'msg': "Utilisateur mis à jour"}, 200
         except Exception as e:
             return {'msg': f"Erreur serveur : {str(e)}"}, 500
 

@@ -56,6 +56,6 @@ fi
 fichier_a_executer="${options[$((choix - 1))]}"
 
 echo -e "Exécution de : $fichier_a_executer\n"
-# python3 "$fichier_a_executer"
+python3 "$fichier_a_executer" > etl.log
 # spark-submit "$fichier_a_executer"
-spark-submit --jars /opt/spark/jars/postgresql-42.6.0.jar "$fichier_a_executer" > etl.log
+# spark-submit --jars /opt/spark/jars/postgresql-42.6.0.jar "$fichier_a_executer" > etl.log
