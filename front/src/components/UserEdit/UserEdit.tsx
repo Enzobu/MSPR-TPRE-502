@@ -1,27 +1,15 @@
 import { useState, useEffect } from "react";
-import useUpdateUser, { type UserForm } from "../../hooks/useUpdateUser";
+import useUpdateUser from "../../hooks/useUpdateUser";
+import type { User, EditUserForm } from "../../types/types";
 
 interface EditUserFormProps {
-  user: {
-    id_user: number;
-    firstname: string;
-    lastname: string;
-    email: string;
-    isAdmin: boolean;
-  };
+  user: User;
   onClose: () => void;
-  onUpdate: (updated: {
-    id_user: number;
-    firstname: string;
-    lastname: string;
-    email: string;
-    isAdmin: boolean;
-  }) => void;
+  onUpdate: (updated: User) => void;
 }
 
-
-const EditUserForm = ({ user, onClose, onUpdate }: EditUserFormProps) => {
-  const [formData, setFormData] = useState<UserForm>({
+const UserEdit = ({ user, onClose, onUpdate }: EditUserFormProps) => {
+  const [formData, setFormData] = useState<EditUserForm>({
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
@@ -30,19 +18,18 @@ const EditUserForm = ({ user, onClose, onUpdate }: EditUserFormProps) => {
 
   const { updateUser, loading, error, updatedUserId } = useUpdateUser();
 
-useEffect(() => {
-  if (updatedUserId === user.id_user) {
-    onUpdate({
-      id_user: user.id_user,
-      firstname: formData.firstname,
-      lastname: formData.lastname,
-      email: formData.email,
-      isAdmin: formData.isAdmin,
-    });
-    onClose();
-  }
-}, [updatedUserId]);
-
+  useEffect(() => {
+    if (updatedUserId === user.id_user) {
+      onUpdate({
+        id_user: user.id_user,
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        email: formData.email,
+        isAdmin: formData.isAdmin,
+      });
+      onClose();
+    }
+  }, [updatedUserId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -76,4 +63,4 @@ useEffect(() => {
   );
 };
 
-export default EditUserForm;
+export default UserEdit;

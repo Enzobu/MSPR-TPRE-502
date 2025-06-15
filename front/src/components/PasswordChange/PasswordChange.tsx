@@ -1,9 +1,9 @@
 import { useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useLoggedUser from "../../hooks/useLoggedUser";
-import "./passwordDetails.css";
+import "./PasswordChange.css";
 
-const MotDePasse = () => {
+const PasswordChange = () => {
   const authHeader = useAuthHeader();
   const { user } = useLoggedUser();
 
@@ -115,4 +115,4 @@ const MotDePasse = () => {
   );
 };
 
-export default MotDePasse;
+export default PasswordChange;

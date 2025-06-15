@@ -6,10 +6,10 @@ interface Props {
   children: ReactNode;
 }
 
-const RequireAuth: React.FC<Props> = ({ children }) => {
+const AuthGuard: React.FC<Props> = ({ children }) => {
   const isAuthenticated = useIsAuthenticated();
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
-export default RequireAuth;
+export default AuthGuard;

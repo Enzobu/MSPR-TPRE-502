@@ -1,46 +1,36 @@
 import { useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-
-export interface UserForm {
-  firstname: string;
-  lastname: string;
-  email: string;
-  isAdmin: boolean;
-}
+import type { EditUserForm } from "../types/types";
 
 const useUpdateUser = () => {
+  const authHeader = useAuthHeader();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [updatedUserId, setUpdatedUserId] = useState<number | null>(null);
-  const authHeader = useAuthHeader();
 
-  const updateUser = async (id_user: number, formData: UserForm) => {
+  const updateUser = async (userId: number, formData: EditUserForm) => {
     if (!authHeader) {
       setError("Token d'authentification manquant.");
       return;
     }
-
     setLoading(true);
-    setError(null);
-
     try {
-      const response = await fetch(`http://qg.enzo-palermo.com:5001/swagger/users/${id_user}`, {
+      const response = await fetch(`http://qg.enzo-palermo.com:5001/swagger/users/${userId}`, {
         method: "PUT",
         headers: {
-          Authorization: authHeader,
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Authorization: authHeader,
         },
         body: JSON.stringify(formData),
       });
-
       if (!response.ok) {
-        throw new Error("Échec de la mise à jour de l'utilisateur.");
+        throw new Error("Erreur lors de la mise à jour de l'utilisateur.");
       }
-
-      setUpdatedUserId(id_user);
-    } catch (err: any) {
-      setError(err.message || "Erreur inconnue");
+      setUpdatedUserId(userId);
+      setError(null);
+    } catch (err) {
+      setError("Erreur lors de la mise à jour de l'utilisateur.");
+      console.error(err);
     } finally {
       setLoading(false);
     }

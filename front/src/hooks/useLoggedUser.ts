@@ -1,26 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { decodeToken } from "react-jwt";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-
-export interface User {
-  id_user: number;
-  lastname: string;
-  firstname: string;
-  email: string;
-  isAdmin: boolean;
-}
-
-interface DecodedToken {
-  sub: string;
-  fresh: boolean;
-  iat: number;
-  jti: string;
-  type: string;
-  nbf: number;
-  exp: number;
-  csrf: string;
-}
+import type { User, DecodedToken } from "../types/types";
 
 const useLoggedUser = () => {
   const authHeader = useAuthHeader();

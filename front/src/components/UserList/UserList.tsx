@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
-import useLoggedUser, { type User } from "../../hooks/useLoggedUser";
+import useLoggedUser from "../../hooks/useLoggedUser";
 import useCreateUser from "../../hooks/useCreateUser";
 import useDeleteUser from "../../hooks/useDeleteUser";
+import type { User, UserForm } from "../../types/types";
 
-import EditUserForm from "../editUserForm/editUserForm";
-import "./allUsers.css";
+import "./UserList.css";
+import EditUserComponent from "../UserEdit/UserEdit";
 
-const initialFormData = {
+const initialFormData: UserForm = {
   firstname: "",
   lastname: "",
   email: "",
@@ -23,14 +24,14 @@ const buttonStyle = {
   color: "white",
 };
 
-const AllUsers = () => {
+const UserList = () => {
   const authHeader = useAuthHeader();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"list" | "add" | "edit">("list");
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<UserForm>(initialFormData);
 
   const {
     user: userLogged,
@@ -222,7 +223,7 @@ const AllUsers = () => {
       )}
 
       {mode === "edit" && editingUser && (
-        <EditUserForm
+        <EditUserComponent
           user={editingUser}
           onClose={() => {
             setEditingUser(null);
@@ -241,4 +242,4 @@ const AllUsers = () => {
   );
 };
 
-export default AllUsers;
+export default UserList;

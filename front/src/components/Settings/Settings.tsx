@@ -1,6 +1,6 @@
-import "./settingsComponent.css"
+import "./Settings.css"
 
-const Parametres = () => {
+const Settings = () => {
     return (
         <div className="settingsSection">
             <h2>Paramètres du compte</h2>
@@ -11,4 +11,4 @@ const Parametres = () => {
     );
 };
 
-export default Parametres;
+export default Settings;

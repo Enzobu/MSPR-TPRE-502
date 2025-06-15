@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useCreateUser from "../../hooks/useCreateUser";
 
-const AddUserForm = () => {
+const UserAdd = () => {
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -45,4 +45,4 @@ const AddUserForm = () => {
   );
 };
 
-export default AddUserForm;
+export default UserAdd;
