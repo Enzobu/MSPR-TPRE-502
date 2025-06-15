@@ -48,7 +48,7 @@ const UserLogin = () => {
       } as any);
 
       if (success) {
-        navigate("/profile");
+        navigate("/");
       } else {
         alert("Erreur interne : impossible de stocker l'authentification.");
       }
