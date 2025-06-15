@@ -2,8 +2,8 @@ import { useState } from "react";
 import "./loginPage.css";
 import analyseLogo from "../../assets/analyze-it-logo.png";
 import whoBackground from "../../assets/who_background.jpg";
-import LoginComponent from "../../components/loginComponent/loginComponent";
-import RegisterComponent from "../../components/registerComponent/registerComponent";
+import LoginComponent from "../../components/UserLogin/UserLogin";
+import UserRegister from "../../components/UserRegister/UserRegister";
 
 function LoginPage() {
   const [module, setModule] = useState("login");
@@ -19,7 +19,7 @@ function LoginPage() {
             </h3>
           </div>
           {module === "login" && <LoginComponent />}
-          {module === "register" && <RegisterComponent />}
+          {module === "register" && <UserRegister />}
           <hr />
           <div className="loginSwitch">
             {module === "login" && (

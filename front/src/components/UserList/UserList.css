@@ -1,0 +1,104 @@
+/* Light mode styles */
+.usersSection {
+  width: 100%;
+  max-width: 900px;
+  padding: 2rem;
+  margin-top: 2rem;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.userForm input:focus {
+  border-color: #009de1;
+  outline: none;
+}
+
+.userForm label {
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+
+
+.userForm button[type="submit"] {
+  background-color: #009de1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.userForm button[type="submit"]:hover {
+  background-color: #007bb8;
+}
+
+.userForm button[type="button"] {
+  background-color: #009de1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  margin: 0 0.75rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.userForm button[type="button"]:hover {
+  background-color: #007bb8;
+}
+
+.userForm p {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .userTable thead {
+    display: none;
+  }
+
+  .userTable,
+  .userTable tbody,
+  .userTable tr,
+  .userTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .userTable tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: white;
+  }
+
+ 
+
+  .userTable td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .userTable td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    top: 0.75rem;
+    font-weight: bold;
+    text-align: left;
+    color: #666;
+  }
+
+
+}

@@ -26,7 +26,7 @@ const fetchLogin = async (
   }
 };
 
-const LoginComponent = () => {
+const UserLogin = () => {
   const signIn = useSignIn();
   const navigate = useNavigate();
 
@@ -92,4 +92,4 @@ const LoginComponent = () => {
   );
 };
 
-export default LoginComponent;
+export default UserLogin;

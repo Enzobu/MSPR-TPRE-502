@@ -1,6 +1,6 @@
-import "./registerComponent.css";
+import "./UserRegister.css";
 
-function RegisterComponent() {
+function UserRegister() {
   return (
     <div className="globalContainer">
       <form>
@@ -35,4 +35,4 @@ function RegisterComponent() {
     </div>
   );
 }
-export default RegisterComponent;
+export default UserRegister;

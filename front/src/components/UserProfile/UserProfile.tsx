@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./profileDetails.css";
+import "./UserProfile.css";
 import { decodeToken } from "react-jwt";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
@@ -21,7 +21,7 @@ interface User {
   isAdmin: boolean;
 }
 
-export function Profile() {
+export function UserProfile() {
   const authHeader = useAuthHeader();
   const [userLogged, setUserLogged] = useState<User | null>(null);
 
@@ -89,4 +89,4 @@ export function Profile() {
   );
 }
 
-export default Profile;
+export default UserProfile;

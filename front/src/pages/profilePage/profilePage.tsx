@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
 import avatarIcon from "../../assets/default-profile-avatar.png";
 import "./profilePage.css";
-import Informations from "../../components/profileDetails/profileDetails";
-import MotDePasse from "../../components/passwordDetails/passwordDetails";
-import Parametres from "../../components/settingsComponent/settingsComponent";
-import AllUsers from "../../components/allUsers/allUsers";
+import Informations from "../../components/UserProfile/UserProfile";
+import MotDePasse from "../../components/PasswordChange/PasswordChange";
+import Parametres from "../../components/Settings/Settings";
+import AllUsers from "../../components/UserList/UserList";
 import useLoggedUser from "../../hooks/useLoggedUser";
 
 const ProfilPage = () => {
