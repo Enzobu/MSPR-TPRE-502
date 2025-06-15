@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import useUpdateUser from "../../hooks/useUpdateUser";
 import type { User, EditUserForm } from "../../types/types";
+import "./UserEdit.css";
 
 interface EditUserFormProps {
   user: User;
@@ -45,7 +46,7 @@ const UserEdit = ({ user, onClose, onUpdate }: EditUserFormProps) => {
   };
 
   return (
-    <form className="userForm" onSubmit={handleSubmit}>
+    <form className="editUserForm" onSubmit={handleSubmit}>
       <h3>Modifier l'utilisateur</h3>
       <input name="firstname" type="text" value={formData.firstname} onChange={handleChange} />
       <input name="lastname" type="text" value={formData.lastname} onChange={handleChange} />

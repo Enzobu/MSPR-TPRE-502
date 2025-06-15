@@ -6,7 +6,7 @@
   text-align: center;
 }
 
-  .userTable td {
+.userTable td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #ddd;
   text-align: center;
@@ -14,18 +14,18 @@
 
 .userTable th {
 
-.userForm h3 {
-  font-size: 1.4rem;
-  color: #009de1;
-  font-weight: 500;
-  margin-bottom: 1rem;
-  text-align: center;
-}
+  .userForm h3 {
+    font-size: 1.4rem;
+    color: #009de1;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
 
-.userForm input:focus {
-  border-color: #009de1;
-  outline: none;
-}
+  .userForm input:focus {
+    border-color: #009de1;
+    outline: none;
+  }
 
 }
 
@@ -58,7 +58,6 @@
   text-align: center;
   font-size: 0.9rem;
 }
-
 
 @media (max-width: 600px) {
   .userTable thead {
