@@ -6,15 +6,11 @@
   background-color: #f9f9f9;
 }
 
-.profileHeader {
-  background-color: #009de1;
-  height: 10rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 2rem;
-  font-weight: 500;
+.profile-container h1{
+  text-align: center;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 1rem;
 }
 
 .avatarImgContainer {

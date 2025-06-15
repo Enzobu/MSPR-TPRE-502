@@ -38,13 +38,7 @@ const Predictions: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
   const authHeader = useAuthHeader();
 
-  console.log('Component state:', {
-    startDate,
-    endDate,
-    selectedCountry,
-    hasAuthHeader: !!authHeader,
-    predictionsLength: predictions.length
-  });
+
 
   // Fetch countries on component mount
   useEffect(() => {
@@ -84,10 +78,8 @@ const Predictions: React.FC = () => {
   }, [authHeader]);
 
   const handleDateChange = (date: string, isStart: boolean) => {
-    console.log('Date change:', { date, isStart });
     if (isStart) {
       setStartDate(date);
-      // Si la date de fin est avant la nouvelle date de début, la mettre à jour
       if (endDate && date > endDate) {
         setEndDate(date);
       }
@@ -97,12 +89,7 @@ const Predictions: React.FC = () => {
   };
 
   const fetchPredictions = async () => {
-    console.log('Starting fetch with:', {
-      authHeader: authHeader ? 'Present' : 'Missing',
-      startDate,
-      endDate,
-      selectedCountry
-    });
+
 
     if (!authHeader) {
       console.error('No auth header available');
@@ -125,7 +112,6 @@ const Predictions: React.FC = () => {
     try {
       setLoading(true);
       const url = `http://qg.enzo-palermo.com:5001/swagger/predictions?disease_id=1&start_date=${startDate}&end_date=${endDate}&country_id=${selectedCountry}`;
-      console.log('Making request to:', url);
 
       const response = await fetch(url, {
         method: 'GET',
@@ -136,11 +122,6 @@ const Predictions: React.FC = () => {
         }
       });
 
-      console.log('Response received:', {
-        status: response.status,
-        ok: response.ok,
-        statusText: response.statusText
-      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -181,7 +162,7 @@ const Predictions: React.FC = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function (context: any) {
             let label = context.dataset.label || '';
             if (label) {
               label += ': ';
@@ -198,7 +179,7 @@ const Predictions: React.FC = () => {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: function(value: any) {
+          callback: function (value: any) {
             return new Intl.NumberFormat('fr-FR').format(value);
           }
         }
@@ -239,7 +220,7 @@ const Predictions: React.FC = () => {
     datasets: [
       {
         label: 'Variation journalière (nouveaux cas)',
-        data: filteredPredictions.map((p, i) => 
+        data: filteredPredictions.map((p, i) =>
           i === 0 ? 0 : p.yhat - filteredPredictions[i - 1].yhat
         ),
         backgroundColor: 'rgba(54, 162, 235, 0.5)',
@@ -326,7 +307,7 @@ const Predictions: React.FC = () => {
             </select>
           </label>
         </div>
-        <button 
+        <button
           onClick={fetchPredictions}
           disabled={!startDate || !endDate || !selectedCountry}
           className="fetch-button"
@@ -336,7 +317,7 @@ const Predictions: React.FC = () => {
       </div>
 
       {error && <div className="error-message">{error}</div>}
-      
+
       {loading ? (
         <div>Chargement des prédictions...</div>
       ) : predictions.length > 0 && filteredPredictions.length > 0 ? (
@@ -348,8 +329,8 @@ const Predictions: React.FC = () => {
               Les lignes en pointillés représentent les limites supérieure et inférieure de la prédiction.
             </p>
             <div className="chart-container">
-              <Line 
-                data={lineChartData} 
+              <Line
+                data={lineChartData}
                 options={{
                   ...chartOptions,
                   scales: {
@@ -368,7 +349,7 @@ const Predictions: React.FC = () => {
                       }
                     }
                   }
-                }} 
+                }}
               />
             </div>
           </div>
@@ -379,8 +360,8 @@ const Predictions: React.FC = () => {
               Une valeur positive indique une augmentation du nombre de cas par rapport au jour précédent.
             </p>
             <div className="chart-container">
-              <Bar 
-                data={barChartData} 
+              <Bar
+                data={barChartData}
                 options={{
                   ...chartOptions,
                   scales: {
@@ -399,7 +380,7 @@ const Predictions: React.FC = () => {
                       }
                     }
                   }
-                }} 
+                }}
               />
             </div>
           </div>
@@ -410,8 +391,8 @@ const Predictions: React.FC = () => {
               Cette mesure permet de comparer l'impact de la pandémie entre des pays de tailles différentes.
             </p>
             <div className="chart-container">
-              <Line 
-                data={incidenceChartData} 
+              <Line
+                data={incidenceChartData}
                 options={{
                   ...chartOptions,
                   scales: {
@@ -430,7 +411,7 @@ const Predictions: React.FC = () => {
                       }
                     }
                   }
-                }} 
+                }}
               />
             </div>
           </div>

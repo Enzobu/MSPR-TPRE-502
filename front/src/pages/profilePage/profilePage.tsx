@@ -8,8 +8,9 @@ import MotDePasse from "../../components/PasswordChange/PasswordChange";
 import Parametres from "../../components/Settings/Settings";
 import AllUsers from "../../components/UserList/UserList";
 import useLoggedUser from "../../hooks/useLoggedUser";
+import Layout from "../../components/Layout/Layout";
 
-const ProfilPage = () => {
+const ProfilePage = () => {
   const [activeSection, setActiveSection] = useState("Informations");
   const signOut = useSignOut();
   const navigate = useNavigate();
@@ -46,42 +47,44 @@ const ProfilPage = () => {
   if (error) return <p style={{ color: "red" }}>Erreur : {error}</p>;
 
   return (
-    <div className="pageContainer">
-      <section className="headerSection">
-        <div className="profileHeader"></div>
-      </section>
+    <Layout>
+      <div className="profile-container">
+        <h1>Votre Compte</h1>
+        <div className="pageContainer">
 
-      <section className="profileSection">
-        <aside className="profileAside">
-          <div className="avatarImgContainer">
-            <img className="avatarImg" src={avatarIcon} alt="avatar" />
-          </div>
+          <section className="profileSection">
+            <aside className="profileAside">
+              <div className="avatarImgContainer">
+                <img className="avatarImg" src={avatarIcon} alt="avatar" />
+              </div>
 
-          <div>
-            <ul>
-              {menuItems.map((item) => (
-                <li
-                  key={item}
-                  className={activeSection === item ? "active" : ""}
-                  onClick={() => setActiveSection(item)}
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+              <div>
+                <ul>
+                  {menuItems.map((item) => (
+                    <li
+                      key={item}
+                      className={activeSection === item ? "active" : ""}
+                      onClick={() => setActiveSection(item)}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          <div className="logoutButtonContainer">
-            <button onClick={handleLogout} className="logoutButton">
-              Se déconnecter
-            </button>
-          </div>
-        </aside>
+              <div className="logoutButtonContainer">
+                <button onClick={handleLogout} className="logoutButton">
+                  Se déconnecter
+                </button>
+              </div>
+            </aside>
 
-        <div className="mainProfile">{renderSection()}</div>
-      </section>
-    </div>
+            <div className="mainProfile">{renderSection()}</div>
+          </section>
+        </div>
+      </div>
+    </Layout>
   );
 };
 
-export default ProfilPage;
+export default ProfilePage;
