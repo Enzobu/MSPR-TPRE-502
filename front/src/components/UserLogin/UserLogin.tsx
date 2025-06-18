@@ -63,28 +63,32 @@ const UserLogin = () => {
         <div className="inputContainer">
           <label htmlFor="email">E-mail</label>
           <input
+            id="email"
             type="email"
             name="email"
             placeholder="Entrez votre email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            aria-required="true"
           />
         </div>
 
         <div className="inputContainer">
           <label htmlFor="password">Mot de passe</label>
           <input
+            id="password"
             type="password"
             name="password"
             placeholder="Entrez votre mot de passe"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            aria-required="true"
           />
         </div>
 
-        <button type="submit" className="loginCTA">
+        <button type="submit" className="loginCTA" aria-label="Se connecter">
           Sign in
         </button>
       </form>

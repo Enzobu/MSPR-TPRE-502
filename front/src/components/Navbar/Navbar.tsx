@@ -13,15 +13,15 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" role="navigation" aria-label="Navigation principale">
       <div className="navbar-brand">
         <img src={logo} alt="Analyze It" />
         <Link to="/">Analyze It</Link>
       </div>
       <div className="navbar-links">
-        <Link to="/" className="nav-link">Accueil</Link>
-        <Link to="/profile" className="nav-link">Compte</Link>
-        <button onClick={handleLogout} className="nav-link logout-button">
+        <Link to="/" className="nav-link" aria-current={window.location.pathname === '/' ? 'page' : undefined}>Accueil</Link>
+        <Link to="/profile" className="nav-link" aria-current={window.location.pathname === '/profile' ? 'page' : undefined}>Compte</Link>
+        <button onClick={handleLogout} className="nav-link logout-button" type="button" aria-label="Déconnexion">
           Déconnexion
         </button>
       </div>

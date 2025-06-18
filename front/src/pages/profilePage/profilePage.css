@@ -72,6 +72,13 @@
   color: white;
 }
 
+.profileAside ul li:focus {
+  outline: 2px solid #009de1;
+  outline-offset: 2px;
+  background-color: #005f8a;
+  color: #fff;
+}
+
 .mainProfile {
   flex: 1;
   background-color: white;

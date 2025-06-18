@@ -32,3 +32,30 @@ body {
   }
 }
 
+:focus {
+  outline: 2px solid #009de1;
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 1000;
+  background: #fff;
+  color: #009de1;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.skip-link:focus {
+  left: 8px;
+  top: 8px;
+  width: auto;
+  height: auto;
+  box-shadow: 0 0 0 2px #009de1;
+}
+

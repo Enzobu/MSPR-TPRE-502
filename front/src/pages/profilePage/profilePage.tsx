@@ -59,12 +59,20 @@ const ProfilePage = () => {
               </div>
 
               <div>
-                <ul>
+                <ul role="menu">
                   {menuItems.map((item) => (
                     <li
                       key={item}
                       className={activeSection === item ? "active" : ""}
+                      role="menuitem"
+                      tabIndex={0}
+                      aria-current={activeSection === item ? "page" : undefined}
                       onClick={() => setActiveSection(item)}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          setActiveSection(item);
+                        }
+                      }}
                     >
                       {item}
                     </li>

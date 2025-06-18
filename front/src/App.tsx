@@ -8,6 +8,7 @@ import RequireAuth from "./components/AuthGuard/AuthGuard";
 function App() {
   return (
     <>
+      <a href="#main-content" className="skip-link">Aller au contenu principal</a>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route

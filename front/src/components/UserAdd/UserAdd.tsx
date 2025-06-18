@@ -36,23 +36,23 @@ const UserAdd = ({ onSuccess, onCancel }: UserAddProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="addUserForm">
-      <input name="firstname" type="text" placeholder="Prénom" onChange={handleChange} required />
-      <input name="lastname" type="text" placeholder="Nom" onChange={handleChange} required />
-      <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
-      <input name="password" type="password" placeholder="Mot de passe" onChange={handleChange} required />
-      <label>
-        Admin :
-        <input name="isAdmin" type="checkbox" onChange={handleChange} />
+      <label htmlFor="firstname">Prénom</label>
+      <input id="firstname" name="firstname" type="text" placeholder="Prénom" onChange={handleChange} required aria-required="true" />
+      <label htmlFor="lastname">Nom</label>
+      <input id="lastname" name="lastname" type="text" placeholder="Nom" onChange={handleChange} required aria-required="true" />
+      <label htmlFor="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="Email" onChange={handleChange} required aria-required="true" />
+      <label htmlFor="password">Mot de passe</label>
+      <input id="password" name="password" type="password" placeholder="Mot de passe" onChange={handleChange} required aria-required="true" />
+      <label htmlFor="isAdmin">Admin :
+        <input id="isAdmin" name="isAdmin" type="checkbox" onChange={handleChange} />
       </label>
-        <button type="submit" disabled={loading}>
-          {loading ? "Création..." : "Créer l'utilisateur"}
-        </button>
-        <button type="button" className="cancelButton" onClick={onCancel}>
-          Annuler
-        </button>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {createdUser && <p>Utilisateur {createdUser.firstname} créé avec succès.</p>}
+      <button type="submit" disabled={loading} aria-label="Créer l'utilisateur">
+        {loading ? "Création..." : "Créer l'utilisateur"}
+      </button>
+      <button type="button" className="cancelButton" onClick={onCancel} aria-label="Annuler la création">Annuler</button>
+      {error && <p style={{ color: "red" }} aria-live="polite">{error}</p>}
+      {createdUser && <p aria-live="polite">Utilisateur {createdUser.firstname} créé avec succès.</p>}
     </form>
   );
 };

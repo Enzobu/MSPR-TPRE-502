@@ -57,6 +57,13 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.nav-link:focus, .logout-button:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  background-color: #005f8a;
+  color: #fff;
+}
+
 @media (max-width: 576px) {
   .navbar {
     flex-direction: column;
