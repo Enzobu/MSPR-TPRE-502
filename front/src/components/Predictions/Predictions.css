@@ -1,17 +1,14 @@
 .predictions-container {
   padding: 20px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 20px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .predictions-controls {
   display: flex;
-  flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 20px;
-  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .date-controls {
@@ -56,58 +53,48 @@
 }
 
 .error-message {
-  color: #ff0000;
-  margin: 10px 0;
+  color: #dc3545;
   padding: 10px;
-  background-color: #ffebee;
+  margin: 10px 0;
+  border: 1px solid #dc3545;
   border-radius: 4px;
+  background-color: #f8d7da;
 }
 
-.charts-container {
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px;
   margin-top: 20px;
 }
 
-.chart-wrapper {
-  background-color: white;
-  padding: 1.5rem;
+.chart-container {
+  background: white;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  height: 500px;
-  display: flex;
-  flex-direction: column;
+  height: 400px;
 }
 
-.chart-wrapper h3 {
-  margin: 0 0 0.5rem 0;
-  color: #2c3e50;
-  font-size: 1.25rem;
+.chart-container h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.2em;
 }
 
-.chart-description {
-  margin: 0 0 1rem 0;
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
   color: #666;
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
-
-.chart-container {
-  flex: 1;
-  position: relative;
-  min-height: 0;
 }
 
 @media (max-width: 768px) {
-  .predictions-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .date-controls {
-    flex-direction: column;
-  }
-
-  .charts-container {
+  .charts-grid {
     grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    height: 300px;
   }
 } 
