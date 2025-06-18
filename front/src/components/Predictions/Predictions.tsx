@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -19,6 +19,20 @@ import type { Prediction, Country } from '../../types/types';
 import { countryTranslations } from '../../data/countryTranslations';
 import { continents, getCountriesByContinent, type Continent } from '../../data/continents';
 import './Predictions.css';
+import { useCountries } from './hooks/useCountries';
+import { usePredictions } from './hooks/usePredictions';
+import { capitalize } from './utils/capitalize';
+import { chartOptions } from './utils/chartOptions';
+import CountrySummary from './components/CountrySummary';
+import PredictionsControls from './components/PredictionsControls';
+import ContinentBarChart from './components/charts/ContinentBarChart';
+import ContinentPredictionBarChart from './components/charts/ContinentPredictionBarChart';
+import ContinentMortalityLineChart from './components/charts/ContinentMortalityLineChart';
+import ContinentMortalityPredictionLineChart from './components/charts/ContinentMortalityPredictionLineChart';
+import CountryMortalityLineChart from './components/charts/CountryMortalityLineChart';
+import CountryMortalityPredictionLineChart from './components/charts/CountryMortalityPredictionLineChart';
+import CountryRecoveryLineChart from './components/charts/CountryRecoveryLineChart';
+import CountryRecoveryPredictionLineChart from './components/charts/CountryRecoveryPredictionLineChart';
 
 ChartJS.register(
   CategoryScale,
@@ -34,51 +48,11 @@ ChartJS.register(
 );
 
 const Predictions: React.FC = () => {
-  const [predictions, setPredictions] = useState<Prediction[]>([]);
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { countries, loading: countriesLoading, error: countriesError } = useCountries();
+  const { predictions, loading: predictionsLoading, error: predictionsError, fetchPredictions } = usePredictions();
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
-  const authHeader = useAuthHeader();
-
-  // Fetch countries on component mount
-  useEffect(() => {
-    const fetchCountries = async () => {
-      if (!authHeader) {
-        setError('Non authentifié');
-        return;
-      }
-
-      try {
-        const response = await fetch('http://qg.enzo-palermo.com:5001/swagger/countries', {
-          headers: {
-            'Authorization': authHeader,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch countries');
-        }
-
-        const data = await response.json();
-        // Sort countries by translated name
-        const sortedCountries = data.sort((a: Country, b: Country) => {
-          const nameA = countryTranslations[a.name.toLowerCase()] || a.name;
-          const nameB = countryTranslations[b.name.toLowerCase()] || b.name;
-          return nameA.localeCompare(nameB);
-        });
-        setCountries(sortedCountries);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      }
-    };
-
-    fetchCountries();
-  }, [authHeader]);
 
   const handleDateChange = (date: string, isStart: boolean) => {
     if (isStart) {
@@ -91,104 +65,11 @@ const Predictions: React.FC = () => {
     }
   };
 
-  const fetchPredictions = async () => {
-    if (!authHeader) {
-      console.error('No auth header available');
-      setError('Non authentifié');
-      return;
-    }
-
-    if (!startDate || !endDate) {
-      console.error('Missing dates');
-      setError('Veuillez sélectionner une période');
-      return;
-    }
-
-    if (!selectedCountry) {
-      console.error('No country selected');
-      setError('Veuillez sélectionner un pays');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const url = `http://qg.enzo-palermo.com:5001/swagger/predictions?disease_id=1&start_date=${startDate}&end_date=${endDate}&country_id=${selectedCountry}`;
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': authHeader,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Failed to fetch predictions: ${response.status} ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('Received data:', data);
-
-      if (!Array.isArray(data)) {
-        console.error('Invalid data format:', data);
-        throw new Error('Invalid data format received from server');
-      }
-
-      setPredictions(data);
-      setError(null);
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredPredictions = predictions.filter(p => p.id_country === selectedCountry);
+  const filteredPredictions = selectedCountry ? predictions.filter(p => p.id_country === selectedCountry) : [];
   console.log('Filtered predictions:', filteredPredictions);
 
-  const selectedCountryData = countries.find(c => c.id_country === selectedCountry);
+  const selectedCountryData = selectedCountry ? countries.find(c => c.id_country === selectedCountry) : null;
   console.log('Selected country data:', selectedCountryData);
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      tooltip: {
-        callbacks: {
-          label: function (context: any) {
-            let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
-            }
-            if (context.parsed.y !== null) {
-              label += new Intl.NumberFormat('fr-FR').format(context.parsed.y);
-            }
-            return label;
-          }
-        }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: function (value: any) {
-            return new Intl.NumberFormat('fr-FR').format(value);
-          }
-        }
-      }
-    }
-  };
-
-  // Fonction utilitaire pour capitaliser la première lettre
-  const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
   // Nom du pays en français et capitalisé
   const selectedCountryNameFr = selectedCountryData ? capitalize(countryTranslations[selectedCountryData.name.toLowerCase()] || selectedCountryData.name) : '';
@@ -358,111 +239,31 @@ const Predictions: React.FC = () => {
 
   return (
     <div className="predictions-container">
-      <div className="predictions-controls">
-        <div className="date-controls">
-          <label>
-            Date de début:
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => handleDateChange(e.target.value, true)}
-              min={format(addDays(new Date(), 1), 'yyyy-MM-dd')}
-            />
-          </label>
-          <label>
-            Date de fin:
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => handleDateChange(e.target.value, false)}
-              min={startDate || format(addDays(new Date(), 1), 'yyyy-MM-dd')}
-              max={startDate ? format(addDays(new Date(startDate), 89), 'yyyy-MM-dd') : ''}
-            />
-          </label>
-        </div>
-        <div className="country-select">
-          <label>
-            Pays:
-            <select
-              value={selectedCountry || ''}
-              onChange={(e) => setSelectedCountry(Number(e.target.value))}
-            >
-              <option value="">Sélectionnez un pays</option>
-              {countries.map((country) => (
-                <option key={country.id_country} value={country.id_country}>
-                  {countryTranslations[country.name.toLowerCase()] || country.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <button
-          onClick={fetchPredictions}
-          disabled={!startDate || !endDate || !selectedCountry}
-          className="fetch-button"
-        >
-          Afficher les prédictions
-        </button>
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
-      {loading && <div className="loading">Chargement...</div>}
-
-      {!loading && !error && predictions.length > 0 && (
+      <PredictionsControls
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+        selectedCountry={selectedCountry}
+        setSelectedCountry={setSelectedCountry}
+        countries={countries}
+        onFetch={() => fetchPredictions(startDate, endDate, selectedCountry)}
+        disabled={!startDate || !endDate || !selectedCountry}
+      />
+      {predictionsError && <div className="error-message">{predictionsError}</div>}
+      {predictionsLoading && <div className="loading">Chargement...</div>}
+      {!predictionsLoading && !predictionsError && predictions.length > 0 && (
         <>
-          {selectedCountryData && (
-            <div className="country-summary">
-              <h2>Résumé du pays sélectionné</h2>
-              <ul>
-                <li><strong>Pays :</strong> {selectedCountryNameFr}</li>
-                <li><strong>Population :</strong> {selectedCountryData.population ? Number(selectedCountryData.population).toLocaleString('fr-FR') : 'N/A'}</li>
-                <li><strong>PIB :</strong> {selectedCountryData.pib ? Number(selectedCountryData.pib).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }) : 'N/A'}</li>
-                {/* Ajoute ici d'autres infos si disponibles dans Country */}
-              </ul>
-            </div>
-          )}
+          {selectedCountryData && <CountrySummary country={selectedCountryData} />}
           <div className="charts-grid">
-
-            <div className="chart-container">
-              <h3>Continents les plus touchés</h3>
-              <Bar data={mostAffectedContinentsData} options={chartOptions} />
-            </div>
-
-            <div className="chart-container">
-              <h3>Prédiction des continents les plus touchés</h3>
-              <Bar data={predictionByContinentData} options={chartOptions} />
-            </div>
-
-            <div className="chart-container">
-              <h3>Taux de mortalité par continent</h3>
-              <Line data={mortalityRateByContinentData} options={chartOptions} />
-            </div>
-
-            <div className="chart-container">
-              <h3>Prédiction du taux de mortalité par continent</h3>
-              <Line data={mortalityPredictionByContinentData} options={chartOptions} />
-            </div>
-
-            <div className="chart-container">
-              <h3>Taux de mortalité {selectedCountryNameFr}</h3>
-              <Line data={mortalityRateData} options={chartOptions} />
-            </div>
-
-            <div className="chart-container">
-              <h3>Prédiction du taux de mortalité {selectedCountryNameFr}</h3>
-              <Line data={mortalityPredictionData} options={chartOptions} />
-            </div>
-
-            <div className="chart-container">
-              <h3>Taux de rétablissement {selectedCountryNameFr}</h3>
-              <Line data={recoveryRateData} options={chartOptions} />
-            </div>
-
-            <div className="chart-container">
-              <h3>Prédiction du taux de rétablissement {selectedCountryNameFr}</h3>
-              <Line data={recoveryPredictionData} options={chartOptions} />
-            </div>
-
+            <ContinentBarChart data={mostAffectedContinentsData} options={chartOptions} />
+            <ContinentPredictionBarChart data={predictionByContinentData} options={chartOptions} />
+            <ContinentMortalityLineChart data={mortalityRateByContinentData} options={chartOptions} />
+            <ContinentMortalityPredictionLineChart data={mortalityPredictionByContinentData} options={chartOptions} />
+            <CountryMortalityLineChart data={mortalityRateData} options={chartOptions} countryName={selectedCountryNameFr} />
+            <CountryMortalityPredictionLineChart data={mortalityPredictionData} options={chartOptions} countryName={selectedCountryNameFr} />
+            <CountryRecoveryLineChart data={recoveryRateData} options={chartOptions} countryName={selectedCountryNameFr} />
+            <CountryRecoveryPredictionLineChart data={recoveryPredictionData} options={chartOptions} countryName={selectedCountryNameFr} />
           </div>
         </>
       )}
