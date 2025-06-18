@@ -66,10 +66,8 @@ const Predictions: React.FC = () => {
   };
 
   const filteredPredictions = selectedCountry ? predictions.filter(p => p.id_country === selectedCountry) : [];
-  console.log('Filtered predictions:', filteredPredictions);
 
   const selectedCountryData = selectedCountry ? countries.find(c => c.id_country === selectedCountry) : null;
-  console.log('Selected country data:', selectedCountryData);
 
   // Nom du pays en français et capitalisé
   const selectedCountryNameFr = selectedCountryData ? capitalize(countryTranslations[selectedCountryData.name.toLowerCase()] || selectedCountryData.name) : '';
