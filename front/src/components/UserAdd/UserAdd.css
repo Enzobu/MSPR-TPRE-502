@@ -85,4 +85,35 @@
   color: #dc3545;
   font-size: 0.9rem;
   margin-top: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .addUserForm {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  .addUserForm h3 {
+    font-size: 1.2rem;
+  }
+  .addUserForm .buttonContainer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .addUserForm {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .addUserForm h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .addUserForm {
+    max-width: 600px;
+    margin: 0 auto;
+  }
 } 

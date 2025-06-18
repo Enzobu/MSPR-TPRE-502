@@ -73,3 +73,31 @@
   }
 
 }
+
+@media (max-width: 576px) {
+  .usersSection h2 {
+    font-size: 1.1rem;
+  }
+  .userTable td {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .usersSection h2 {
+    font-size: 1.3rem;
+  }
+  .userTable td {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .usersSection h2 {
+    font-size: 2rem;
+  }
+  .userTable td {
+    font-size: 1.1rem;
+  }
+}

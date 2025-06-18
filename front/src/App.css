@@ -17,8 +17,26 @@ body,
   width: 100%;
 }
 
+@media (max-width: 576px) {
+  .main-content {
+    padding: 0.5rem;
+    width: 100%;
+  }
+  .app {
+    min-height: 100vh;
+  }
+}
+
 @media (max-width: 768px) {
   .main-content {
     padding: 1rem;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
   }
 }

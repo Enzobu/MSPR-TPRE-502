@@ -64,4 +64,27 @@
   margin-bottom: 1rem;
   font-size: 0.875rem;
   text-align: center;
+}
+
+@media (max-width: 576px) {
+  .loginForm {
+    padding: 1rem;
+    max-width: 95vw;
+  }
+  .globalContainer {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .loginForm {
+    padding: 1.5rem;
+    max-width: 90vw;
+  }
+}
+
+@media (min-width: 1200px) {
+  .loginForm {
+    max-width: 500px;
+  }
 } 

@@ -11,3 +11,24 @@ body {
   color: #2b2b2b;
 }
 
+@media (max-width: 576px) {
+  body {
+    font-size: 14px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+    padding: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  body {
+    font-size: 18px;
+    margin: 0 auto;
+  }
+}
+

@@ -83,4 +83,31 @@
   color: #dc3545;
   font-size: 0.9rem;
   margin-top: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .editUserForm {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  .editUserForm h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .editUserForm {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .editUserForm h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .editUserForm {
+    max-width: 600px;
+    margin: 0 auto;
+  }
 } 
