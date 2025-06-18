@@ -17,7 +17,7 @@ import { format, addDays} from 'date-fns';
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import type { Prediction, Country } from '../../types/types';
 import { countryTranslations } from '../../data/countryTranslations';
-import { continents, getCountriesByContinent } from '../../data/continents';
+import { continents, getCountriesByContinent, type Continent } from '../../data/continents';
 import './Predictions.css';
 
 ChartJS.register(
@@ -187,151 +187,97 @@ const Predictions: React.FC = () => {
     }
   };
 
-  // Graphique de comparaison des pays les plus touchés
-  const mostAffectedCountriesData = {
-    labels: countries.map(c => countryTranslations[c.name.toLowerCase()] || c.name),
-    datasets: [{
-      label: 'Nombre total de cas',
-      data: countries.map(country => {
-        const countryPredictions = predictions.filter(p => p.id_country === country.id_country);
-        return countryPredictions.reduce((sum, p) => sum + p.yhat, 0);
-      }),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      borderColor: 'rgb(255, 99, 132)',
-      borderWidth: 1
-    }]
-  };
+  // Fonction utilitaire pour capitaliser la première lettre
+  const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-  // Graphique de prédiction par pays
-  const predictionByCountryData = {
-    labels: countries.map(c => countryTranslations[c.name.toLowerCase()] || c.name),
-    datasets: [{
-      label: 'Prédiction de cas',
-      data: countries.map(country => {
-        const countryPredictions = predictions.filter(p => p.id_country === country.id_country);
-        return countryPredictions[countryPredictions.length - 1]?.yhat || 0;
-      }),
-      backgroundColor: 'rgba(54, 162, 235, 0.5)',
-      borderColor: 'rgb(54, 162, 235)',
-      borderWidth: 1
-    }]
-  };
+  // Nom du pays en français et capitalisé
+  const selectedCountryNameFr = selectedCountryData ? capitalize(countryTranslations[selectedCountryData.name.toLowerCase()] || selectedCountryData.name) : '';
 
-  // Graphique de vitesse de propagation
-  const propagationSpeedData = {
-    labels: filteredPredictions.map(p => format(new Date(p.ds), 'dd/MM/yyyy')),
-    datasets: [{
-      label: 'Vitesse de propagation (nouveaux cas par jour)',
-      data: filteredPredictions.map((p, i) => 
-        i === 0 ? 0 : p.yhat - filteredPredictions[i - 1].yhat
-      ),
-      borderColor: 'rgb(75, 192, 192)',
-      tension: 0.1,
-      fill: false
-    }]
-  };
+  // Récupérer les deux points temporels : début et fin
+  const predictionStart = filteredPredictions[0];
+  const predictionEnd = filteredPredictions[filteredPredictions.length - 1];
+  const startLabel = predictionStart ? format(new Date(predictionStart.ds), 'dd/MM/yyyy') : '';
+  const endLabel = endDate ? format(new Date(endDate), 'dd/MM/yyyy') : '';
+  const twoPointLabels = [startLabel, endLabel];
 
-  // Graphique de taux de mortalité
+  // Graphique de taux de mortalité (début et fin)
   const mortalityRateData = {
-    labels: filteredPredictions.map(p => format(new Date(p.ds), 'dd/MM/yyyy')),
-    datasets: [{
-      label: 'Taux de mortalité (%)',
-      data: filteredPredictions.map(p => {
-        const population = selectedCountryData ? Number(selectedCountryData.population) : 0;
-        return population > 0 ? (p.deaths / population) * 100 : 0;
-      }),
-      borderColor: 'rgb(255, 99, 132)',
-      tension: 0.1,
-      fill: false
-    }]
+    labels: twoPointLabels,
+    datasets: [
+      {
+        label: 'Taux de mortalité (%)',
+        data: [
+          predictionStart && selectedCountryData ? (predictionStart.deaths / Number(selectedCountryData.population)) * 100 : 0,
+          predictionEnd && selectedCountryData ? (predictionEnd.deaths / Number(selectedCountryData.population)) * 100 : 0
+        ],
+        borderColor: 'rgb(255, 99, 132)',
+        tension: 0.1,
+        fill: false
+      }
+    ]
   };
 
-  // Graphique de prédiction du taux de mortalité
+  // Graphique de prédiction du taux de mortalité (début et fin)
   const mortalityPredictionData = {
-    labels: filteredPredictions.map(p => format(new Date(p.ds), 'dd/MM/yyyy')),
-    datasets: [{
-      label: 'Prédiction du taux de mortalité (%)',
-      data: filteredPredictions.map(p => {
-        const population = selectedCountryData ? Number(selectedCountryData.population) : 0;
-        return population > 0 ? (p.deaths_upper / population) * 100 : 0;
-      }),
-      borderColor: 'rgba(255, 99, 132, 0.5)',
-      borderDash: [5, 5],
-      tension: 0.1,
-      fill: false
-    }]
+    labels: twoPointLabels,
+    datasets: [
+      {
+        label: 'Prédiction du taux de mortalité (%)',
+        data: [
+          predictionStart && selectedCountryData ? (predictionStart.deaths_upper / Number(selectedCountryData.population)) * 100 : 0,
+          predictionEnd && selectedCountryData ? (predictionEnd.deaths_upper / Number(selectedCountryData.population)) * 100 : 0
+        ],
+        borderColor: 'rgba(255, 99, 132, 0.5)',
+        borderDash: [5, 5],
+        tension: 0.1,
+        fill: false
+      }
+    ]
   };
 
-  // Graphique de taux de rétablissement
+  // Graphique de taux de rétablissement (début et fin)
   const recoveryRateData = {
-    labels: filteredPredictions.map(p => format(new Date(p.ds), 'dd/MM/yyyy')),
-    datasets: [{
-      label: 'Taux de rétablissement (%)',
-      data: filteredPredictions.map(p => {
-        const population = selectedCountryData ? Number(selectedCountryData.population) : 0;
-        const recovered = p.yhat - p.deaths;
-        return population > 0 ? (recovered / population) * 100 : 0;
-      }),
-      borderColor: 'rgb(75, 192, 192)',
-      tension: 0.1,
-      fill: false
-    }]
+    labels: twoPointLabels,
+    datasets: [
+      {
+        label: 'Taux de rétablissement (%)',
+        data: [
+          predictionStart && selectedCountryData ? ((predictionStart.yhat - predictionStart.deaths) / Number(selectedCountryData.population)) * 100 : 0,
+          predictionEnd && selectedCountryData ? ((predictionEnd.yhat - predictionEnd.deaths) / Number(selectedCountryData.population)) * 100 : 0
+        ],
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1,
+        fill: false
+      }
+    ]
   };
 
-  // Graphique de prédiction du taux de rétablissement
+  // Graphique de prédiction du taux de rétablissement (début et fin)
   const recoveryPredictionData = {
-    labels: filteredPredictions.map(p => format(new Date(p.ds), 'dd/MM/yyyy')),
-    datasets: [{
-      label: 'Prédiction du taux de rétablissement (%)',
-      data: filteredPredictions.map(p => {
-        const population = selectedCountryData ? Number(selectedCountryData.population) : 0;
-        const recovered = p.yhat_upper - p.deaths_upper;
-        return population > 0 ? (recovered / population) * 100 : 0;
-      }),
-      borderColor: 'rgba(75, 192, 192, 0.5)',
-      borderDash: [5, 5],
-      tension: 0.1,
-      fill: false
-    }]
+    labels: twoPointLabels,
+    datasets: [
+      {
+        label: 'Prédiction du taux de rétablissement (%)',
+        data: [
+          predictionStart && selectedCountryData ? ((predictionStart.yhat_upper - predictionStart.deaths_upper) / Number(selectedCountryData.population)) * 100 : 0,
+          predictionEnd && selectedCountryData ? ((predictionEnd.yhat_upper - predictionEnd.deaths_upper) / Number(selectedCountryData.population)) * 100 : 0
+        ],
+        borderColor: 'rgba(75, 192, 192, 0.5)',
+        borderDash: [5, 5],
+        tension: 0.1,
+        fill: false
+      }
+    ]
   };
 
   // Fonction pour agréger les données par continent
-  const aggregateDataByContinent = (predictions: Prediction[]) => {
-    const continentData = new Map<number, {
-      totalCases: number,
-      totalDeaths: number,
-      predictions: Prediction[]
-    }>();
-
-    // Initialiser les données pour chaque continent
-    continents.forEach(continent => {
-      continentData.set(continent.id, {
-        totalCases: 0,
-        totalDeaths: 0,
-        predictions: []
-      });
-    });
-
-    // Agréger les données
-    predictions.forEach(prediction => {
-      const continentId = continents.find(c => c.countries.includes(prediction.id_country))?.id;
-      if (continentId) {
-        const data = continentData.get(continentId)!;
-        data.totalCases += prediction.yhat;
-        data.totalDeaths += prediction.deaths;
-        data.predictions.push(prediction);
-      }
-    });
-
-    return continentData;
-  };
 
   // Graphique des continents les plus touchés
   const mostAffectedContinentsData = {
-    labels: continents.map(c => c.name),
+    labels: continents.map((c: Continent) => c.name),
     datasets: [{
       label: 'Nombre total de cas par continent',
-      data: continents.map(continent => {
+      data: continents.map((continent: Continent) => {
         const continentPredictions = predictions.filter(p => 
           getCountriesByContinent(continent.id).includes(p.id_country)
         );
@@ -343,71 +289,71 @@ const Predictions: React.FC = () => {
     }]
   };
 
-  // Graphique de prédiction par continent
+  // Graphique de taux de mortalité par continent
+  const mortalityRateByContinentData = {
+    labels: twoPointLabels,
+    datasets: continents.map((continent: Continent) => {
+      const continentPredictions = predictions.filter(p => getCountriesByContinent(continent.id).includes(p.id_country));
+      const start = continentPredictions[0];
+      const end = continentPredictions[continentPredictions.length - 1];
+      const getPop = (pred: Prediction | undefined) => {
+        if (!pred) return 0;
+        const country = countries.find(c => c.id_country === pred.id_country);
+        return country ? Number(country.population) : 0;
+      };
+      return {
+        label: `${continent.name}`,
+        data: [
+          start ? (start.deaths / getPop(start)) * 100 : 0,
+          end ? (end.deaths / getPop(end)) * 100 : 0
+        ],
+        borderColor: `hsl(${continent.id * 60}, 70%, 50%)`,
+        tension: 0.1,
+        fill: false
+      };
+    })
+  };
+
+  // Graphique de prédiction du taux de mortalité par continent (début et fin)
+  const mortalityPredictionByContinentData = {
+    labels: twoPointLabels,
+    datasets: continents.map((continent: Continent) => {
+      const continentPredictions = predictions.filter(p => getCountriesByContinent(continent.id).includes(p.id_country));
+      const start = continentPredictions[0];
+      const end = continentPredictions[continentPredictions.length - 1];
+      const getPop = (pred: Prediction | undefined) => {
+        if (!pred) return 0;
+        const country = countries.find(c => c.id_country === pred.id_country);
+        return country ? Number(country.population) : 0;
+      };
+      return {
+        label: `${continent.name}`,
+        data: [
+          start ? (start.deaths_upper / getPop(start)) * 100 : 0,
+          end ? (end.deaths_upper / getPop(end)) * 100 : 0
+        ],
+        borderColor: `hsl(${continent.id * 60}, 70%, 50%)`,
+        borderDash: [5, 5],
+        tension: 0.1,
+        fill: false
+      };
+    })
+  };
+
+  // Graphique de prédiction des continents les plus touchés (fin de période)
   const predictionByContinentData = {
-    labels: continents.map(c => c.name),
+    labels: continents.map((c: Continent) => c.name),
     datasets: [{
-      label: 'Prédiction de cas par continent',
-      data: continents.map(continent => {
-        const continentPredictions = predictions.filter(p => 
-          getCountriesByContinent(continent.id).includes(p.id_country)
-        );
-        return continentPredictions[continentPredictions.length - 1]?.yhat || 0;
+      label: 'Cas prédits à la fin de la période',
+      data: continents.map((continent: Continent) => {
+        const continentPredictions = predictions.filter(p => getCountriesByContinent(continent.id).includes(p.id_country));
+        const end = continentPredictions[continentPredictions.length - 1];
+        return end ? end.yhat : 0;
       }),
       backgroundColor: 'rgba(54, 162, 235, 0.5)',
       borderColor: 'rgb(54, 162, 235)',
       borderWidth: 1
     }]
-  };
-
-  // Graphique de vitesse de propagation par continent
-  const propagationSpeedByContinentData = {
-    labels: filteredPredictions.map(p => format(new Date(p.ds), 'dd/MM/yyyy')),
-    datasets: continents.map(continent => ({
-      label: `Vitesse de propagation - ${continent.name}`,
-      data: filteredPredictions.map((_, index) => {
-        const continentPredictions = predictions.filter(p => 
-          getCountriesByContinent(continent.id).includes(p.id_country)
-        );
-        const currentDay = continentPredictions.filter(p => 
-          format(new Date(p.ds), 'dd/MM/yyyy') === format(new Date(filteredPredictions[index].ds), 'dd/MM/yyyy')
-        );
-        const previousDay = continentPredictions.filter(p => 
-          format(new Date(p.ds), 'dd/MM/yyyy') === format(new Date(filteredPredictions[index - 1]?.ds || filteredPredictions[index].ds), 'dd/MM/yyyy')
-        );
-        const currentTotal = currentDay.reduce((sum, p) => sum + p.yhat, 0);
-        const previousTotal = previousDay.reduce((sum, p) => sum + p.yhat, 0);
-        return index === 0 ? 0 : currentTotal - previousTotal;
-      }),
-      borderColor: `hsl(${continent.id * 60}, 70%, 50%)`,
-      tension: 0.1,
-      fill: false
-    }))
-  };
-
-  // Graphique de taux de mortalité par continent
-  const mortalityRateByContinentData = {
-    labels: filteredPredictions.map(p => format(new Date(p.ds), 'dd/MM/yyyy')),
-    datasets: continents.map(continent => ({
-      label: `Taux de mortalité - ${continent.name}`,
-      data: filteredPredictions.map(p => {
-        const continentPredictions = predictions.filter(pred => 
-          getCountriesByContinent(continent.id).includes(pred.id_country)
-        );
-        const dayPredictions = continentPredictions.filter(pred => 
-          format(new Date(pred.ds), 'dd/MM/yyyy') === format(new Date(p.ds), 'dd/MM/yyyy')
-        );
-        const totalDeaths = dayPredictions.reduce((sum, pred) => sum + pred.deaths, 0);
-        const totalPopulation = dayPredictions.reduce((sum, pred) => {
-          const country = countries.find(c => c.id_country === pred.id_country);
-          return sum + (country ? Number(country.population) : 0);
-        }, 0);
-        return totalPopulation > 0 ? (totalDeaths / totalPopulation) * 100 : 0;
-      }),
-      borderColor: `hsl(${continent.id * 60}, 70%, 50%)`,
-      tension: 0.1,
-      fill: false
-    }))
   };
 
   return (
@@ -463,62 +409,62 @@ const Predictions: React.FC = () => {
       {loading && <div className="loading">Chargement...</div>}
 
       {!loading && !error && predictions.length > 0 && (
-        <div className="charts-grid">
-          <div className="chart-container">
-            <h3>Pays les plus touchés</h3>
-            <Bar data={mostAffectedCountriesData} options={chartOptions} />
-          </div>
+        <>
+          {selectedCountryData && (
+            <div className="country-summary">
+              <h2>Résumé du pays sélectionné</h2>
+              <ul>
+                <li><strong>Pays :</strong> {selectedCountryNameFr}</li>
+                <li><strong>Population :</strong> {selectedCountryData.population ? Number(selectedCountryData.population).toLocaleString('fr-FR') : 'N/A'}</li>
+                <li><strong>PIB :</strong> {selectedCountryData.pib ? Number(selectedCountryData.pib).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }) : 'N/A'}</li>
+                {/* Ajoute ici d'autres infos si disponibles dans Country */}
+              </ul>
+            </div>
+          )}
+          <div className="charts-grid">
 
-          <div className="chart-container">
-            <h3>Continents les plus touchés</h3>
-            <Bar data={mostAffectedContinentsData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Continents les plus touchés</h3>
+              <Bar data={mostAffectedContinentsData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Prédiction par pays</h3>
-            <Bar data={predictionByCountryData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Prédiction des continents les plus touchés</h3>
+              <Bar data={predictionByContinentData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Prédiction par continent</h3>
-            <Bar data={predictionByContinentData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Taux de mortalité par continent</h3>
+              <Line data={mortalityRateByContinentData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Vitesse de propagation par pays</h3>
-            <Line data={propagationSpeedData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Prédiction du taux de mortalité par continent</h3>
+              <Line data={mortalityPredictionByContinentData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Vitesse de propagation par continent</h3>
-            <Line data={propagationSpeedByContinentData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Taux de mortalité {selectedCountryNameFr}</h3>
+              <Line data={mortalityRateData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Taux de mortalité par pays</h3>
-            <Line data={mortalityRateData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Prédiction du taux de mortalité {selectedCountryNameFr}</h3>
+              <Line data={mortalityPredictionData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Taux de mortalité par continent</h3>
-            <Line data={mortalityRateByContinentData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Taux de rétablissement {selectedCountryNameFr}</h3>
+              <Line data={recoveryRateData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Prédiction du taux de mortalité par pays</h3>
-            <Line data={mortalityPredictionData} options={chartOptions} />
-          </div>
+            <div className="chart-container">
+              <h3>Prédiction du taux de rétablissement {selectedCountryNameFr}</h3>
+              <Line data={recoveryPredictionData} options={chartOptions} />
+            </div>
 
-          <div className="chart-container">
-            <h3>Taux de rétablissement par pays</h3>
-            <Line data={recoveryRateData} options={chartOptions} />
           </div>
-
-          <div className="chart-container">
-            <h3>Prédiction du taux de rétablissement par pays</h3>
-            <Line data={recoveryPredictionData} options={chartOptions} />
-          </div>
-        </div>
+        </>
       )}
     </div>
   );
