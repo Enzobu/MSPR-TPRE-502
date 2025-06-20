@@ -4,9 +4,15 @@ const Settings = () => {
     return (
         <div className="settingsSection">
             <h2>Paramètres du compte</h2>
-            <p>Notifications : <input type="checkbox" defaultChecked /></p>
-            <p>Thème sombre : <input type="checkbox" /></p>
-            <button>Enregistrer les modifications</button>
+            <label>
+              Notifications :
+              <input type="checkbox" defaultChecked aria-checked="true" aria-label="Activer les notifications" />
+            </label>
+            <label>
+              Thème sombre :
+              <input type="checkbox" aria-checked="false" aria-label="Activer le thème sombre" />
+            </label>
+            <button type="button" aria-label="Enregistrer les modifications">Enregistrer les modifications</button>
         </div>
     );
 };

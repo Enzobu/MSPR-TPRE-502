@@ -75,41 +75,47 @@ const PasswordChange = () => {
     <div className="passwordSection">
       <h2>Changer le mot de passe</h2>
       <form onSubmit={handleSubmit}>
-        <label>
+        <label htmlFor="oldPassword">
           Ancien mot de passe :
           <input
+            id="oldPassword"
             type="password"
             name="oldPassword"
             value={formData.oldPassword}
             onChange={handleChange}
             required
+            aria-required="true"
           />
         </label>
-        <label>
+        <label htmlFor="newPassword">
           Nouveau mot de passe :
           <input
+            id="newPassword"
             type="password"
             name="newPassword"
             value={formData.newPassword}
             onChange={handleChange}
             required
+            aria-required="true"
           />
         </label>
-        <label>
+        <label htmlFor="confirmPassword">
           Confirmer le nouveau mot de passe :
           <input
+            id="confirmPassword"
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
             required
+            aria-required="true"
           />
         </label>
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} aria-label="Mettre à jour le mot de passe">
           {loading ? "Mise à jour..." : "Mettre à jour"}
         </button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
+        {error && <p style={{ color: "red" }} aria-live="polite">{error}</p>}
+        {success && <p style={{ color: "green" }} aria-live="polite">{success}</p>}
       </form>
     </div>
   );

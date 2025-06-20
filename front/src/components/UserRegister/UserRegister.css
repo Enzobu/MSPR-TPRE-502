@@ -50,11 +50,51 @@
 
 }
 
+@media (max-width: 576px) {
+    .globalContainer {
+        padding: 0.5rem;
+        width: 100vw;
+    }
+    .detailsWrapper, .credentialWrapper {
+        flex-direction: column;
+        padding: 0;
+    }
+    .inputContainer input {
+        font-size: 0.9rem;
+        padding: 0.4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .globalContainer {
+        padding: 1rem;
+    }
+    .detailsWrapper, .credentialWrapper {
+        flex-direction: column;
+        padding: 0.5rem 0;
+    }
+    .inputContainer input {
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .globalContainer {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .inputContainer input {
+        font-size: 1.1rem;
+        padding: 0.7rem;
+    }
+}
+
 @media (max-width : 550px) {
     .detailsWrapper, .credentialWrapper {
         flex-direction: column;
     }
     .globalContainer {
-        width: 100%;
+        width: 75%;
     }
 }

@@ -51,7 +51,6 @@ export function UserProfile() {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         
         setUserLogged(data);
       })

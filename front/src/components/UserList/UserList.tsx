@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useLoggedUser from "../../hooks/useLoggedUser";
-import useCreateUser from "../../hooks/useCreateUser";
 import useDeleteUser from "../../hooks/useDeleteUser";
-import type { User, UserForm } from "../../types/types";
+import type { User } from "../../types/types";
 
 import "./UserList.css";
 import EditUserComponent from "../UserEdit/UserEdit";
-
-const initialFormData: UserForm = {
-  firstname: "",
-  lastname: "",
-  email: "",
-  password: "",
-  isAdmin: false,
-};
+import UserAdd from "../UserAdd/UserAdd";
 
 const buttonStyle = {
   marginLeft: 5,
@@ -31,19 +23,12 @@ const UserList = () => {
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"list" | "add" | "edit">("list");
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [formData, setFormData] = useState<UserForm>(initialFormData);
 
   const {
     user: userLogged,
     loading: userLoading,
     error: userError,
   } = useLoggedUser();
-  const {
-    createUser,
-    loading: creating,
-    error: createError,
-    createdUser,
-  } = useCreateUser();
   const {
     deleteUser,
     loading: deleting,
@@ -70,26 +55,12 @@ const UserList = () => {
         // Retour en mode liste après ajout ou suppression
         setMode("list");
         setEditingUser(null);
-        setFormData(initialFormData);
       })
       .catch(() => {
         setError("Erreur lors de la récupération des utilisateurs.");
         setLoading(false);
       });
-  }, [authHeader, createdUser, deletedUserId]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await createUser(formData);
-  };
+  }, [authHeader, deletedUserId]);
 
   if (loading || userLoading) return <p>Chargement des utilisateurs...</p>;
   if (error || userError)
@@ -150,10 +121,7 @@ const UserList = () => {
             <div className="addUserButtonContainer">
               <button
                 className="CreateNewItemButton"
-                onClick={() => {
-                  setMode("add");
-                  setFormData(initialFormData);
-                }}
+                onClick={() => setMode("add")}
               >
                 Ajouter un utilisateur
               </button>
@@ -163,63 +131,13 @@ const UserList = () => {
       )}
 
       {mode === "add" && (
-        <form className="userForm" onSubmit={handleSubmit}>
+        <div>
           <h3>Créer un nouvel utilisateur</h3>
-          <input
-            name="firstname"
-            type="text"
-            placeholder="Prénom"
-            value={formData.firstname}
-            onChange={handleChange}
-            required
+          <UserAdd 
+            onSuccess={() => setMode("list")} 
+            onCancel={() => setMode("list")} 
           />
-          <input
-            name="lastname"
-            type="text"
-            placeholder="Nom"
-            value={formData.lastname}
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Mot de passe"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <label>
-            Admin :
-            <input
-              name="isAdmin"
-              type="checkbox"
-              checked={formData.isAdmin}
-              onChange={handleChange}
-            />
-          </label>
-          <button type="submit" disabled={creating}>
-            {creating ? "Création..." : "Créer l'utilisateur"}
-          </button>
-          {createError && <p style={{ color: "red" }}>{createError}</p>}
-          {createdUser && (
-            <p style={{ color: "green" }}>
-              Utilisateur "{createdUser.firstname} {createdUser.lastname}" créé
-              avec succès.
-            </p>
-          )}
-          <button type="button" onClick={() => setMode("list")}>
-            Annuler
-          </button>
-        </form>
+        </div>
       )}
 
       {mode === "edit" && editingUser && (
