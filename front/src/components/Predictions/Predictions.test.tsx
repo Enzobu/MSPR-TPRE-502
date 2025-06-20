@@ -1,72 +1,51 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '../../test-utils';
 import Predictions from './Predictions';
 
-// Mock de React pour éviter les erreurs de hooks
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
-  return {
-    ...actual,
-    useRef: vi.fn(() => ({ current: null })),
-    useState: vi.fn(() => ['', vi.fn()]),
-    useEffect: vi.fn()
-  };
-});
-
-// Mock des hooks d'authentification
-vi.mock('react-auth-kit/hooks/useAuthHeader', () => ({
-  default: () => 'Bearer mock-token'
-}));
-
 // Mock des données de prédictions
-vi.mock('../../hooks/usePredictions', () => ({
-  default: () => ({
-    predictions: [
-      {
-        id: 1,
-        id_country: 1,
-        date: '2024-01-01',
-        cases: 100,
-        deaths: 10,
-        recoveries: 80
-      }
-    ],
+vi.mock('./hooks/usePredictions', () => ({
+  usePredictions: vi.fn(() => ({
+    predictions: [],
     loading: false,
-    error: null
-  })
+    error: null,
+    fetchPredictions: vi.fn(),
+  })),
 }));
 
 // Mock des données de pays
-vi.mock('../../hooks/useCountries', () => ({
-  default: () => ({
+vi.mock('./hooks/useCountries', () => ({
+  useCountries: vi.fn(() => ({
     countries: [
       {
-        id: 1,
+        id_country: 1,
         name: 'France',
-        continent: 'Europe'
-      }
+        population: '65000000',
+        id_continent: 1,
+      },
     ],
     loading: false,
-    error: null
-  })
-}));
-
-// Mock des continents
-vi.mock('../../data/continents', () => ({
-  continents: [
-    { id: 1, name: 'Europe' },
-    { id: 2, name: 'Asia' }
-  ]
-}));
-
-// Mock des fonctions utilitaires
-vi.mock('../../utils/countryUtils', () => ({
-  getCountriesByContinent: () => [1, 2, 3]
+    error: null,
+  })),
 }));
 
 describe('Predictions', () => {
-  it('affiche le composant de prédictions', () => {
+  beforeEach(() => {
     render(<Predictions />);
-    expect(screen.getByText('Prédictions')).toBeInTheDocument();
+  });
+
+  it('devrait afficher le champ pour la date de début', () => {
+    expect(screen.getByText('Date de début:')).toBeInTheDocument();
+  });
+
+  it('devrait afficher le champ pour la date de fin', () => {
+    expect(screen.getByText('Date de fin:')).toBeInTheDocument();
+  });
+
+  it('devrait afficher la sélection du pays', () => {
+    expect(screen.getByText('Pays:')).toBeInTheDocument();
+  });
+
+  it("devrait afficher le bouton 'Afficher les prédictions'", () => {
+    expect(screen.getByRole('button', { name: /afficher les prédictions/i })).toBeInTheDocument();
   });
 }); 

@@ -1,39 +1,38 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '../../test-utils';
 import LoginPage from './LoginPage';
 
-// Mock de React pour éviter les erreurs de hooks
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
-  return {
-    ...actual,
-    useRef: vi.fn(() => ({ current: null })),
-    useState: vi.fn(() => ['', vi.fn()]),
-    useEffect: vi.fn()
-  };
-});
-
-// Mock de react-router-dom
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-  Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
-    <a href={to}>{children}</a>
-  )
-}));
-
-// Mock des hooks d'authentification
-vi.mock('react-auth-kit/hooks/useSignIn', () => ({
-  default: () => vi.fn()
-}));
-
-// Mock du composant UserLogin
-vi.mock('../../components/UserLogin/UserLogin', () => ({
-  default: () => <div data-testid="user-login">Formulaire de connexion</div>
-}));
-
 describe('LoginPage', () => {
-  it('affiche la page de connexion', () => {
+  beforeEach(() => {
     render(<LoginPage />);
-    expect(screen.getByText('Getting started now')).toBeInTheDocument();
+  });
+
+  describe('quand le formulaire de connexion est affiché', () => {
+    it("devrait afficher le titre 'Welcome back'", () => {
+      expect(screen.getByText('Welcome back')).toBeInTheDocument();
+    });
+
+    it("devrait afficher un lien pour basculer vers l'enregistrement", () => {
+      expect(screen.getByText('Register')).toBeInTheDocument();
+    });
+
+    it('devrait afficher le composant de connexion', () => {
+      // On vérifie la présence d'un élément spécifique au formulaire de connexion
+      expect(screen.getByRole('button', { name: /se connecter/i })).toBeInTheDocument();
+    });
+  });
+
+  describe("quand l'utilisateur bascule vers le formulaire d'enregistrement", () => {
+    beforeEach(() => {
+      fireEvent.click(screen.getByText('Register'));
+    });
+
+    it("devrait afficher le titre 'Getting started now'", () => {
+      expect(screen.getByText('Getting started now')).toBeInTheDocument();
+    });
+
+    it('devrait afficher un lien pour basculer vers la connexion', () => {
+      expect(screen.getByText('Log in')).toBeInTheDocument();
+    });
   });
 }); 

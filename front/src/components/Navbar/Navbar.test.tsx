@@ -1,34 +1,26 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen } from '../../test-utils';
 import Navbar from './Navbar';
 
-// Mock de react-router-dom
-vi.mock('react-router-dom', () => ({
-  Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
-    <a href={to} data-testid={`link-${to}`}>{children}</a>
-  ),
-  useLocation: () => ({ pathname: '/' }),
-  useNavigate: () => vi.fn()
-}));
-
-// Mock de React pour éviter les erreurs de hooks
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
-  return {
-    ...actual,
-    useRef: vi.fn(() => ({ current: null })),
-    useEffect: vi.fn()
-  };
-});
-
-// Mock du contexte d'authentification
-vi.mock('react-auth-kit/hooks/useSignOut', () => ({
-  default: () => vi.fn()
-}));
-
 describe('Navbar', () => {
-  it('affiche la barre de navigation', () => {
+  beforeEach(() => {
     render(<Navbar />);
-    expect(screen.getByText('Accueil')).toBeInTheDocument();
+  });
+
+  it("devrait afficher le logo et le nom du site", () => {
+    expect(screen.getByText('Analyze It')).toBeInTheDocument();
+    expect(screen.getByAltText('Analyze It')).toBeInTheDocument();
+  });
+
+  it("devrait afficher le lien 'Accueil'", () => {
+    expect(screen.getByRole('link', { name: 'Accueil' })).toBeInTheDocument();
+  });
+
+  it("devrait afficher le lien 'Compte'", () => {
+    expect(screen.getByRole('link', { name: 'Compte' })).toBeInTheDocument();
+  });
+
+  it("devrait afficher le bouton 'Déconnexion'", () => {
+    expect(screen.getByRole('button', { name: 'Déconnexion' })).toBeInTheDocument();
   });
 }); 

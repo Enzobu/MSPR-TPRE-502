@@ -1,25 +1,51 @@
 import { describe, it, expect, vi } from 'vitest';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import AuthGuard from './AuthGuard';
+import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
+import AuthProvider from 'react-auth-kit';
+import createStore from 'react-auth-kit/createStore';
 
-// Mock de react-router-dom
-vi.mock('react-router-dom', () => ({
-  Navigate: ({ to }: { to: string }) => <div data-testid="navigate" data-to={to} />,
-  Outlet: () => <div data-testid="outlet" />
-}));
+// Mock du hook
+vi.mock('react-auth-kit/hooks/useIsAuthenticated');
 
-// Mock des hooks d'authentification
-vi.mock('react-auth-kit/hooks/useIsAuthenticated', () => ({
-  default: () => true
-}));
+const MockLoginPage = () => <div>Page de connexion</div>;
+const ProtectedContent = () => <div>Contenu protégé</div>;
+
+const store = createStore({
+  authName: '_auth',
+  authType: 'cookie',
+  cookieDomain: window.location.hostname,
+  cookieSecure: window.location.protocol === 'https:',
+});
+
+const renderWithRouter = (isAuthenticated: boolean) => {
+  (useIsAuthenticated as vi.Mock).mockReturnValue(isAuthenticated);
+  
+  return render(
+    <AuthProvider store={store}>
+      <MemoryRouter initialEntries={['/protected']}>
+        <Routes>
+          <Route path="/login" element={<MockLoginPage />} />
+          <Route path="/protected" element={<AuthGuard><ProtectedContent /></AuthGuard>} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>
+  );
+};
 
 describe('AuthGuard', () => {
-  it('affiche le contenu protégé quand l\'utilisateur est authentifié', () => {
-    render(
-      <AuthGuard>
-        <div data-testid="protected-content">Contenu protégé</div>
-      </AuthGuard>
-    );
-    expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+  describe("quand l'utilisateur est authentifié", () => {
+    it('devrait afficher le contenu protégé', () => {
+      renderWithRouter(true);
+      expect(screen.getByText('Contenu protégé')).toBeInTheDocument();
+    });
+  });
+
+  describe("quand l'utilisateur n'est pas authentifié", () => {
+    it('devrait rediriger vers la page de connexion', () => {
+      renderWithRouter(false);
+      expect(screen.getByText('Page de connexion')).toBeInTheDocument();
+    });
   });
 }); 

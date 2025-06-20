@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./loginPage.css";
+import "./LoginPage.css";
 import analyseLogo from "../../assets/analyze-it-logo.png";
 import whoBackground from "../../assets/who_background.jpg";
 import LoginComponent from "../../components/UserLogin/UserLogin";

@@ -1,63 +1,49 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '../../test-utils';
 import HomePage from './HomePage';
 
-// Mock de React pour éviter les erreurs de hooks
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
-  return {
-    ...actual,
-    useRef: vi.fn(() => ({ current: null })),
-    useEffect: vi.fn()
-  };
-});
-
-// Mock de react-router-dom
-vi.mock('react-router-dom', () => ({
-  Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
-    <a href={to}>{children}</a>
-  ),
-  useNavigate: () => vi.fn()
+vi.mock('../../components/Predictions/hooks/usePredictions', () => ({
+  usePredictions: vi.fn(() => ({
+    predictions: [],
+    loading: false,
+    error: null,
+    fetchPredictions: vi.fn(),
+  })),
 }));
 
-// Mock du contexte d'authentification
-vi.mock('react-auth-kit/hooks/useUser', () => ({
-  default: () => ({
-    id: 1,
-    firstname: 'John',
-    lastname: 'Doe',
-    email: 'john@example.com'
-  })
-}));
-
-// Mock du contexte d'authentification complet
-vi.mock('react-auth-kit/AuthContext', () => ({
-  useReactAuthKit: () => ({
-    set: vi.fn(),
-    get: () => ({
-      auth: {
-        token: 'mock-token',
-        type: 'Bearer',
-        expiresAt: new Date(Date.now() + 3600000)
+vi.mock('../../components/Predictions/hooks/useCountries', () => ({
+  useCountries: vi.fn(() => ({
+    countries: [
+      {
+        id_country: 1,
+        name: 'France',
+        population: '65000000',
+        id_continent: 1,
       },
-      userState: {
-        id: 1,
-        firstname: 'John',
-        lastname: 'Doe',
-        email: 'john@example.com'
-      }
-    })
-  })
-}));
-
-// Mock du hook useSignOut
-vi.mock('react-auth-kit/hooks/useSignOut', () => ({
-  default: () => vi.fn()
+    ],
+    loading: false,
+    error: null,
+  })),
 }));
 
 describe('HomePage', () => {
-  it('affiche la page d\'accueil', () => {
+  beforeEach(() => {
     render(<HomePage />);
-    expect(screen.getByText('Bienvenue')).toBeInTheDocument();
+  });
+
+  it("devrait afficher le titre 'Tableau de bord'", () => {
+    expect(screen.getByText('Tableau de bord')).toBeInTheDocument();
+  });
+
+  it("devrait afficher le lien de navigation 'Accueil'", () => {
+    expect(screen.getByRole('link', { name: /accueil/i })).toBeInTheDocument();
+  });
+
+  it("devrait afficher le lien de navigation 'Compte'", () => {
+    expect(screen.getByRole('link', { name: /compte/i })).toBeInTheDocument();
+  });
+
+  it("devrait afficher le bouton de déconnexion", () => {
+    expect(screen.getByRole('button', { name: /déconnexion/i })).toBeInTheDocument();
   });
 }); 
