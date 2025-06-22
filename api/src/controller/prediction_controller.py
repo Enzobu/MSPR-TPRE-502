@@ -39,7 +39,6 @@ class PredictionResource(Resource):
     @prediction_namespace.response(200, 'Succès')
     @prediction_namespace.response(400, 'Requête invalide')
     @prediction_namespace.response(500, 'Erreur serveur')
-    @prediction_namespace.marshal_list_with(prediction_model)
     def get(self):
         """Récupérer les prédictions par maladie entre deux dates, si la période est valide"""
         try:
