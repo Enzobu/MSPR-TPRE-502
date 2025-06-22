@@ -57,6 +57,46 @@
   background-color: #007bb8;
 }
 
+@media (max-width: 576px) {
+  .MainContainer {
+    padding: 0.5rem;
+    max-width: 100vw;
+  }
+  .InfoContainer {
+    padding: 0.5rem;
+  }
+  .CreateNewItemButton {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .MainContainer {
+    padding: 1rem;
+    max-width: 95vw;
+  }
+  .InfoContainer {
+    padding: 1rem;
+  }
+  .CreateNewItemButton {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .MainContainer {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .InfoContainer {
+    padding: 2rem;
+  }
+  .CreateNewItemButton {
+    font-size: 1.1rem;
+  }
+}
+
 @media (max-width: 600px) {
   .InfoContainer span {
     width: 100%;

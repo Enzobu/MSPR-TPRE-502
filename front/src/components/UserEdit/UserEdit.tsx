@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import useUpdateUser from "../../hooks/useUpdateUser";
 import type { User, EditUserForm } from "../../types/types";
+import "./UserEdit.css";
 
 interface EditUserFormProps {
   user: User;
@@ -45,20 +46,22 @@ const UserEdit = ({ user, onClose, onUpdate }: EditUserFormProps) => {
   };
 
   return (
-    <form className="userForm" onSubmit={handleSubmit}>
+    <form className="editUserForm" onSubmit={handleSubmit}>
       <h3>Modifier l'utilisateur</h3>
-      <input name="firstname" type="text" value={formData.firstname} onChange={handleChange} />
-      <input name="lastname" type="text" value={formData.lastname} onChange={handleChange} />
-      <input name="email" type="email" value={formData.email} onChange={handleChange} />
-      <label>
-        Admin :
-        <input name="isAdmin" type="checkbox" checked={formData.isAdmin} onChange={handleChange} />
+      <label htmlFor="firstname">Prénom</label>
+      <input id="firstname" name="firstname" type="text" value={formData.firstname} onChange={handleChange} aria-required="true" />
+      <label htmlFor="lastname">Nom</label>
+      <input id="lastname" name="lastname" type="text" value={formData.lastname} onChange={handleChange} aria-required="true" />
+      <label htmlFor="email">Email</label>
+      <input id="email" name="email" type="email" value={formData.email} onChange={handleChange} aria-required="true" />
+      <label htmlFor="isAdmin">Admin :
+        <input id="isAdmin" name="isAdmin" type="checkbox" checked={formData.isAdmin} onChange={handleChange} />
       </label>
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} aria-label="Mettre à jour l'utilisateur">
         {loading ? "Mise à jour..." : "Mettre à jour"}
       </button>
-      <button type="button" onClick={onClose}>Annuler</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <button type="button" onClick={onClose} aria-label="Annuler la modification">Annuler</button>
+      {error && <p style={{ color: "red" }} aria-live="polite">{error}</p>}
     </form>
   );
 };
