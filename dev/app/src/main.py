@@ -70,7 +70,7 @@ for country in df['country_name'].unique():
     print(f"[INFO] Modèle sauvegardé pour {country}.")
 
     # Récupération de l'id_country
-    cur.execute("SELECT id_country FROM country WHERE country_name = %s", (country,))
+    cur.execute("SELECT id_country FROM country WHERE name = %s", (country,))
     result = cur.fetchone()
     if not result:
         print(f"[WARNING] id_country non trouvé pour {country}, insertion ignorée.")
