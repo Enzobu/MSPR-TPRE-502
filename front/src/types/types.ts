@@ -58,11 +58,11 @@ export interface Prediction {
 export interface Country {
   id_country: number;
   name: string;
-  iso_code: string;
-  population: string;
-  pib: string;
-  latitude: string;
-  longitude: string;
-  id_continent: number;
-  id_region: number;
+  iso_code?: string;
+  population?: string;
+  pib?: string;
+  latitude?: string;
+  longitude?: string;
+  id_continent?: number;
+  id_region?: number;
 } 

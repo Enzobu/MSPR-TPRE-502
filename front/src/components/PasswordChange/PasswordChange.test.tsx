@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { render, screen } from '../../test-utils';
 import PasswordChange from './PasswordChange';
 import useLoggedUser from '../../hooks/useLoggedUser';
@@ -9,7 +9,7 @@ vi.mock('../../hooks/useLoggedUser');
 describe('PasswordChange', () => {
   beforeEach(() => {
     // Fournir une valeur de retour pour le mock
-    (useLoggedUser as vi.Mock).mockReturnValue({
+    (useLoggedUser as Mock).mockReturnValue({
       user: { id_user: 1 },
       loading: false,
       error: null,

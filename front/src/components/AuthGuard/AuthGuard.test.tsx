@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import AuthGuard from './AuthGuard';
@@ -20,7 +20,7 @@ const store = createStore({
 });
 
 const renderWithRouter = (isAuthenticated: boolean) => {
-  (useIsAuthenticated as vi.Mock).mockReturnValue(isAuthenticated);
+  (useIsAuthenticated as Mock).mockReturnValue(isAuthenticated);
   
   return render(
     <AuthProvider store={store}>
