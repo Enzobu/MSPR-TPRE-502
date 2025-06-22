@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '../../test-utils';
 import ProfilePage from './ProfilePage';
 import useLoggedUser from '../../hooks/useLoggedUser';
@@ -21,20 +21,20 @@ const mockAdmin = {
 
 describe('ProfilePage', () => {
   it('devrait afficher le message de chargement', () => {
-    (useLoggedUser as vi.Mock).mockReturnValue({ loading: true });
+    (useLoggedUser as Mock).mockReturnValue({ loading: true });
     render(<ProfilePage />);
     expect(screen.getByText('Chargement...')).toBeInTheDocument();
   });
 
   it("devrait afficher un message d'erreur", () => {
-    (useLoggedUser as vi.Mock).mockReturnValue({ error: 'Une erreur' });
+    (useLoggedUser as Mock).mockReturnValue({ error: 'Une erreur' });
     render(<ProfilePage />);
     expect(screen.getByText('Erreur : Une erreur')).toBeInTheDocument();
   });
 
   describe('quand l\'utilisateur est connecté', () => {
     it('devrait afficher les informations du profil par défaut', () => {
-      (useLoggedUser as vi.Mock).mockReturnValue({ user: mockUser, loading: false });
+      (useLoggedUser as Mock).mockReturnValue({ user: mockUser, loading: false });
       render(<ProfilePage />);
       expect(screen.getByText('Votre Compte')).toBeInTheDocument();
       // Le composant Informations affiche "VOTRE PROFIL"
@@ -42,19 +42,19 @@ describe('ProfilePage', () => {
     });
 
     it('ne devrait pas afficher le menu "Utilisateurs" pour un non-admin', () => {
-      (useLoggedUser as vi.Mock).mockReturnValue({ user: mockUser, loading: false });
+      (useLoggedUser as Mock).mockReturnValue({ user: mockUser, loading: false });
       render(<ProfilePage />);
       expect(screen.queryByText('Utilisateurs')).not.toBeInTheDocument();
     });
 
     it('devrait afficher le menu "Utilisateurs" pour un admin', () => {
-      (useLoggedUser as vi.Mock).mockReturnValue({ user: mockAdmin, loading: false });
+      (useLoggedUser as Mock).mockReturnValue({ user: mockAdmin, loading: false });
       render(<ProfilePage />);
       expect(screen.getByText('Utilisateurs')).toBeInTheDocument();
     });
 
     it('devrait changer de section au clic sur le menu', () => {
-      (useLoggedUser as vi.Mock).mockReturnValue({ user: mockUser, loading: false });
+      (useLoggedUser as Mock).mockReturnValue({ user: mockUser, loading: false });
       render(<ProfilePage />);
       
       fireEvent.click(screen.getByText('Mot de passe'));

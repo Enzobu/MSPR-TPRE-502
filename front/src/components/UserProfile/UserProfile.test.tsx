@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { render, screen } from '../../test-utils';
 import UserProfile from './UserProfile';
 import useLoggedUser from '../../hooks/useLoggedUser';
@@ -16,7 +16,7 @@ const mockUser = {
 describe('UserProfile', () => {
 
   it("devrait afficher le message de chargement lorsque les données sont en cours de récupération", () => {
-    (useLoggedUser as vi.Mock).mockReturnValue({
+    (useLoggedUser as Mock).mockReturnValue({
       user: null,
       loading: true,
       error: null,
@@ -27,7 +27,7 @@ describe('UserProfile', () => {
   });
 
   it("devrait afficher un message d'erreur en cas de problème", () => {
-    (useLoggedUser as vi.Mock).mockReturnValue({
+    (useLoggedUser as Mock).mockReturnValue({
       user: null,
       loading: false,
       error: 'Une erreur est survenue',
@@ -38,7 +38,7 @@ describe('UserProfile', () => {
   });
 
   it("devrait afficher les informations de l'utilisateur une fois chargées", () => {
-    (useLoggedUser as vi.Mock).mockReturnValue({
+    (useLoggedUser as Mock).mockReturnValue({
       user: mockUser,
       loading: false,
       error: null,
