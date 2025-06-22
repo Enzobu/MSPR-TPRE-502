@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSignOut from "react-auth-kit/hooks/useSignOut";
 import avatarIcon from "../../assets/default-profile-avatar.png";
-import "./profilePage.css";
+import "./ProfilePage.css";
 import Informations from "../../components/UserProfile/UserProfile";
 import MotDePasse from "../../components/PasswordChange/PasswordChange";
 import Parametres from "../../components/Settings/Settings";
