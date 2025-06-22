@@ -19,4 +19,24 @@ describe('Layout', () => {
   it('devrait afficher le contenu enfant passé au composant', () => {
     expect(screen.getByText('Contenu enfant')).toBeInTheDocument();
   });
+
+  it('devrait avoir la structure correcte avec main et role', () => {
+    const mainElement = screen.getByRole('main');
+    expect(mainElement).toBeInTheDocument();
+    expect(mainElement).toHaveAttribute('id', 'main-content');
+  });
+
+  it('devrait afficher plusieurs éléments enfants', () => {
+    render(
+      <Layout>
+        <h1>Titre principal</h1>
+        <p>Paragraphe de contenu</p>
+        <button>Bouton d'action</button>
+      </Layout>
+    );
+    
+    expect(screen.getByText('Titre principal')).toBeInTheDocument();
+    expect(screen.getByText('Paragraphe de contenu')).toBeInTheDocument();
+    expect(screen.getByText('Bouton d\'action')).toBeInTheDocument();
+  });
 }); 

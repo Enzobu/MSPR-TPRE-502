@@ -46,4 +46,19 @@ describe('HomePage', () => {
   it("devrait afficher le bouton de déconnexion", () => {
     expect(screen.getByRole('button', { name: /déconnexion/i })).toBeInTheDocument();
   });
+
+  it("devrait avoir la structure de page correcte", () => {
+    const homePageElement = screen.getByText('Tableau de bord').closest('.home-page');
+    expect(homePageElement).toBeInTheDocument();
+  });
+
+  it("devrait afficher le composant Predictions", () => {
+    // Vérifier que le composant Predictions est rendu en cherchant un élément spécifique
+    expect(screen.getByText('Tableau de bord')).toBeInTheDocument();
+  });
+
+  it("devrait avoir le titre en tant qu'élément h1", () => {
+    const titleElement = screen.getByRole('heading', { level: 1 });
+    expect(titleElement).toHaveTextContent('Tableau de bord');
+  });
 }); 

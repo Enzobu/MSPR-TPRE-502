@@ -23,4 +23,25 @@ describe('Navbar', () => {
   it("devrait afficher le bouton 'Déconnexion'", () => {
     expect(screen.getByRole('button', { name: 'Déconnexion' })).toBeInTheDocument();
   });
+
+  it("devrait avoir la structure de navigation correcte", () => {
+    const navElement = screen.getByRole('navigation');
+    expect(navElement).toBeInTheDocument();
+    expect(navElement).toHaveAttribute('aria-label', 'Navigation principale');
+  });
+
+  it("devrait avoir les liens avec les bonnes classes CSS", () => {
+    const accueilLink = screen.getByRole('link', { name: 'Accueil' });
+    const compteLink = screen.getByRole('link', { name: 'Compte' });
+    
+    expect(accueilLink).toHaveClass('nav-link');
+    expect(compteLink).toHaveClass('nav-link');
+  });
+
+  it("devrait avoir le bouton de déconnexion avec les bons attributs", () => {
+    const logoutButton = screen.getByRole('button', { name: 'Déconnexion' });
+    expect(logoutButton).toHaveClass('nav-link', 'logout-button');
+    expect(logoutButton).toHaveAttribute('type', 'button');
+    expect(logoutButton).toHaveAttribute('aria-label', 'Déconnexion');
+  });
 }); 

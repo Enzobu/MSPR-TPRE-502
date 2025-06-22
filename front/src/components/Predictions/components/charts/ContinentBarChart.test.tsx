@@ -33,4 +33,26 @@ describe('ContinentBarChart', () => {
     render(<ContinentBarChart data={mockData} options={mockOptions} />);
     expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
   });
+
+  it('affiche le titre du graphique des continents', () => {
+    const mockData = {
+      labels: ['Europe', 'Asia', 'America'],
+      datasets: [{
+        label: 'Cas par continent',
+        data: [100, 200, 150]
+      }]
+    };
+    
+    const mockOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top' as const,
+        }
+      }
+    };
+    
+    render(<ContinentBarChart data={mockData} options={mockOptions} />);
+    expect(screen.getByText('Continents les plus touchés')).toBeInTheDocument();
+  });
 }); 
