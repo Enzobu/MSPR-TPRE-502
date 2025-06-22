@@ -6,15 +6,11 @@
   background-color: #f9f9f9;
 }
 
-.profileHeader {
-  background-color: #009de1;
-  height: 10rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 2rem;
-  font-weight: 500;
+.profile-container h1{
+  text-align: center;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 1rem;
 }
 
 .avatarImgContainer {
@@ -76,6 +72,13 @@
   color: white;
 }
 
+.profileAside ul li:focus {
+  outline: 2px solid #009de1;
+  outline-offset: 2px;
+  background-color: #005f8a;
+  color: #fff;
+}
+
 .mainProfile {
   flex: 1;
   background-color: white;
@@ -106,4 +109,62 @@
 
 .logoutButton:hover {
   background-color: #0077a8;
+}
+
+@media (max-width: 576px) {
+  .profileSection {
+    flex-direction: column;
+    padding: 1rem 0.5rem;
+    gap: 1rem;
+  }
+  .profileAside {
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .mainProfile {
+    padding: 1rem 0.5rem;
+  }
+  .avatarImg {
+    width: 90px;
+    height: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profileSection {
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    gap: 1.2rem;
+  }
+  .profileAside {
+    margin: 0 auto;
+    width: 90%;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .mainProfile {
+    padding: 2rem 1rem;
+  }
+  .avatarImg {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .profileSection {
+    flex-direction: row;
+    gap: 2rem;
+  }
+  .profileAside {
+    width: 25%;
+    padding: 2rem 1rem;
+  }
+  .mainProfile {
+    padding: 3rem 2rem;
+  }
+  .avatarImg {
+    width: 150px;
+    height: 150px;
+  }
 }
