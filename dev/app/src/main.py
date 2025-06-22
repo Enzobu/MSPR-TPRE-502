@@ -69,7 +69,6 @@ for country in df['country_name'].unique():
 
     print(f"[INFO] Modèle sauvegardé pour {country}.")
 
-    # Récupération de l'id_country
     cur.execute("SELECT id_country FROM country WHERE name = %s", (country,))
     result = cur.fetchone()
     if not result:
@@ -77,7 +76,7 @@ for country in df['country_name'].unique():
         continue
 
     id_country = result[0]
-    id_disease = 1  # Modifier selon ton besoin
+    id_disease = 1
 
     for _, row in forecast.iterrows():
         cur.execute("""
