@@ -163,12 +163,13 @@
     box-shadow: none;
   }
   .charts-grid {
-    gap: 14px;
+    gap: 25px;
   }
   .chart-container {
     height: 220px;
     padding: 10px 4px 8px 4px;
     border-radius: 7px;
+    padding-bottom: 65px;
   }
   .country-summary {
     padding: 10px 8px;
