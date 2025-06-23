@@ -76,7 +76,7 @@ class PredictionResource(Resource):
                     FROM prediction
                     WHERE id_disease = %s
                     AND ds BETWEEN %s AND %s
-                    ORDER BY ds ASC
+                    ORDER BY ds ASC, id_country ASC, id_prediction ASC;
                 """, (disease_id, start_date, end_date))
 
                 rows = cur.fetchall()
