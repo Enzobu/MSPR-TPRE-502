@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import {
   Chart as ChartJS,
@@ -12,8 +13,8 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { format } from 'date-fns';
-import type { Prediction } from '../../types/types';
+import { format} from 'date-fns';
+import type { Prediction} from '../../types/types';
 import { countryTranslations } from '../../data/countryTranslations';
 import { continents, getCountriesByContinent, type Continent } from '../../data/continents';
 import './Predictions.css';
@@ -46,7 +47,7 @@ ChartJS.register(
 );
 
 const Predictions: React.FC = () => {
-  const { countries } = useCountries();
+  const { countries} = useCountries();
   const { predictions, loading: predictionsLoading, error: predictionsError, fetchPredictions } = usePredictions();
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
