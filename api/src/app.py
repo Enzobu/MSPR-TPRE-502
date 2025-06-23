@@ -8,6 +8,7 @@ from controller import climat_type_controller, continent_controller, country_cli
 from controller import country_controller, disease_controller, region_controller, statement_controller
 from controller import login_controller, prediction_controller
 from connect_db import get_db_connection
+from datetime import timedelta
 
 
 def hash_password(password: str) -> str:
@@ -25,6 +26,7 @@ app = Flask(__name__)
 CORS(app)
 
 app.config['JWT_SECRET_KEY'] = 'votre_clé_secrète_super_sécurisée'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
 jwt = JWTManager(app)
 
 @app.route('/')
