@@ -63,5 +63,16 @@ services:
       postgres:
         condition: service_healthy
 
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: mspr502_front
+    restart: unless-stopped
+    ports:
+      - "5000:80"
+    depends_on:
+      - postgres
+
 volumes:
   pg-data:
