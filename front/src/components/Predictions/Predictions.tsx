@@ -53,6 +53,7 @@ const Predictions: React.FC = () => {
   const [endDate, setEndDate] = useState<string>('');
   const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
 
+
   const filteredPredictions = selectedCountry ? predictions.filter(p => p.id_country === selectedCountry) : [];
 
   const selectedCountryData = selectedCountry ? countries.find(c => c.id_country === selectedCountry) : null;
