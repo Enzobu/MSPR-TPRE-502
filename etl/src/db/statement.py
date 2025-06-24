@@ -49,9 +49,9 @@ def set_statement(df_final):
     spark = spark_session()
     df_final.show(50)
 
-    jdbc_url = "jdbc:postgresql://postgres:5432/mspr501"
+    jdbc_url = "jdbc:postgresql://qg.enzo-palermo.com:5432/mspr502"
     properties = {
-        "user": "mspr501",
+        "user": "mspr502",
         "password": "s5t4v5",
         "driver": "org.postgresql.Driver"
     }
