@@ -45,6 +45,7 @@ class PredictionResource(Resource):
             disease_id = request.args.get('disease_id')
             start_date_str = request.args.get('start_date')
             end_date_str = request.args.get('end_date')
+            country_id = request.args.get('country_id')
 
             if not disease_id or not start_date_str or not end_date_str:
                 return {'msg': "Paramètres requis : disease_id, start_date, end_date"}, 400
@@ -65,7 +66,8 @@ class PredictionResource(Resource):
 
             with DBConnection() as conn:
                 cur = conn.cursor()
-                cur.execute("""
+                
+                query = """
                     SELECT 
                         id_prediction, id_country, id_disease, ds,
                         yhat, yhat_lower, yhat_upper,
@@ -76,8 +78,16 @@ class PredictionResource(Resource):
                     FROM prediction
                     WHERE id_disease = %s
                     AND ds BETWEEN %s AND %s
-                    ORDER BY ds ASC, id_country ASC, id_prediction ASC;
-                """, (disease_id, start_date, end_date))
+                """
+                params = [disease_id, start_date, end_date]
+                
+                if country_id:
+                    query += " AND id_country = %s"
+                    params.append(country_id)
+                    
+                query += " ORDER BY ds ASC, id_country ASC, id_prediction ASC;"
+                
+                cur.execute(query, params)
 
                 rows = cur.fetchall()
 
