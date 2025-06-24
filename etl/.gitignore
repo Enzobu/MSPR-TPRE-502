@@ -1,0 +1,4 @@
+*.env
+*.pylintrc
+*.db.sql
+/data_files/
