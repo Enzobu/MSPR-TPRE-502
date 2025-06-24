@@ -12,7 +12,7 @@ interface PredictionsControlsProps {
   selectedCountry: number | null;
   setSelectedCountry: (id: number) => void;
   countries: Country[];
-  onFetch: () => void;
+  onFetch: (startDate: string, endDate: string, countryId: number) => void;
   disabled: boolean;
 }
 
@@ -66,7 +66,7 @@ const PredictionsControls: React.FC<PredictionsControlsProps> = ({
       </label>
     </div>
     <button
-      onClick={onFetch}
+      onClick={() => selectedCountry && onFetch(startDate, endDate, selectedCountry)}
       disabled={disabled}
       className="fetch-button"
     >
