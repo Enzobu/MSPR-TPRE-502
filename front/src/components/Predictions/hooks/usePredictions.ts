@@ -23,7 +23,7 @@ export function usePredictions() {
     }
     try {
       setLoading(true);
-      const url = `http://qg.enzo-palermo.com:5001/swagger/predictions?disease_id=1&start_date=${startDate}&end_date=${endDate}&country_id=${selectedCountry}`;
+      const url = `${import.meta.env.VITE_API_URL}/swagger/predictions/get?disease_id=1&start_date=${startDate}&end_date=${endDate}&country_id=${selectedCountry}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
