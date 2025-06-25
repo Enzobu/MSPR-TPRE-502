@@ -37,8 +37,7 @@ SELECT
   s._date AS ds,
   s.confirmed AS y,
   s.deaths::float / NULLIF(m.max_deaths, 0) AS deaths,
-  -- c.population::float / NULLIF(m.max_population, 0) AS population,
-  c.population::float AS population,
+  c.population::float / NULLIF(m.max_population, 0) AS population,
   c.pib::float / NULLIF(m.max_pib, 0) AS pib,
   c.name as country_name
 FROM
