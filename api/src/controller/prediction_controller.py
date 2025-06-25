@@ -191,3 +191,56 @@ class TransmissionRateResource(Resource):
 
         except Exception as e:
             return {"error": str(e)}, 500
+
+
+@prediction_namespace.route('/predictions/mortality-rate')
+class MortalityRateResource(Resource):
+    
+    conn = get_db_connection()
+
+    def get_daily_mortality_rate(self, country_id, disease_id, date, conn):
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT deaths, population
+                FROM prediction
+                WHERE id_country = %s AND id_disease = %s AND ds = %s
+            """, (country_id, disease_id, date))
+            result = cur.fetchone()
+            if result and result[0] is not None and result[1] and result[1] != 0:
+                return result[0] / result[1]
+            return 0.0
+
+    @jwt_required()
+    @prediction_namespace.response(200, 'Succès')
+    @prediction_namespace.response(400, 'Requête invalide')
+    @prediction_namespace.response(500, 'Erreur serveur')
+    def get(self):
+        country_id = request.args.get('country_id')
+        disease_id = request.args.get('disease_id')
+        start_date_str = request.args.get('start_date')
+        end_date_str = request.args.get('end_date')
+
+        if not country_id or not disease_id or not start_date_str or not end_date_str:
+            return {"error": "Paramètres 'country_id', 'disease_id', 'start_date' et 'end_date' requis"}, 400
+
+        try:
+            start_date = datetime.strptime(start_date_str[:10], "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date_str[:10], "%Y-%m-%d").date()
+
+            mortality_rates = []
+            current_date = start_date
+            while current_date <= end_date:
+                rate = self.get_daily_mortality_rate(country_id, disease_id, current_date, self.conn)
+                mortality_rates.append({str(current_date): rate})
+                current_date += timedelta(days=1)
+
+            return {
+                "country_id": country_id,
+                "disease_id": disease_id,
+                "start_date": str(start_date),
+                "end_date": str(end_date),
+                "mortality_rate": mortality_rates
+            }, 200
+
+        except Exception as e:
+            return {"error": str(e)}, 500
