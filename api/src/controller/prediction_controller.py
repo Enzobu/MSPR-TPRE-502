@@ -123,7 +123,7 @@ class PredictionResource(Resource):
         except Exception as e:
             return {'msg': f"Erreur serveur : {str(e)}"}, 500
 
-@prediction_namespace.route('/predictions/rate')
+@prediction_namespace.route('/predictions/transmission-rate')
 class TransmissionRateResource(Resource):
 
     conn = get_db_connection()
