@@ -195,19 +195,27 @@ class TransmissionRateResource(Resource):
 
 @prediction_namespace.route('/predictions/mortality-rate')
 class MortalityRateResource(Resource):
-    
+
     conn = get_db_connection()
 
-    def get_daily_mortality_rate(self, country_id, disease_id, date, conn):
+    def get_country_population(self, country_id, conn):
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT deaths, population
+                SELECT population FROM country WHERE id_country = %s
+            """, (country_id,))
+            result = cur.fetchone()
+            return result[0] if result and result[0] else 0
+
+    def get_daily_mortality_rate(self, country_id, disease_id, date, conn, population):
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT deaths
                 FROM prediction
                 WHERE id_country = %s AND id_disease = %s AND ds = %s
             """, (country_id, disease_id, date))
             result = cur.fetchone()
-            if result and result[0] is not None and result[1] and result[1] != 0:
-                return result[0] / result[1]
+            if result and result[0] is not None and population and population != 0:
+                return result[0] / population
             return 0.0
 
     @jwt_required()
@@ -227,10 +235,14 @@ class MortalityRateResource(Resource):
             start_date = datetime.strptime(start_date_str[:10], "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date_str[:10], "%Y-%m-%d").date()
 
+            population = self.get_country_population(country_id, self.conn)
+            if population == 0:
+                return {"error": "Population non trouvée pour ce pays"}, 500
+
             mortality_rates = []
             current_date = start_date
             while current_date <= end_date:
-                rate = self.get_daily_mortality_rate(country_id, disease_id, current_date, self.conn)
+                rate = self.get_daily_mortality_rate(country_id, disease_id, current_date, self.conn, population)
                 mortality_rates.append({str(current_date): rate})
                 current_date += timedelta(days=1)
 
