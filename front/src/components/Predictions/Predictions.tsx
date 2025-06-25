@@ -15,13 +15,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Globe, TrendingUp, AlertCircle } from 'lucide-react';
+import { TrendingUp, AlertCircle } from 'lucide-react';
 import { countryTranslations } from '../../data/countryTranslations';
 import { useCountries } from './hooks/useCountries';
 import { usePredictions } from './hooks/usePredictions';
 import { capitalize } from './utils/capitalize';
 import CountrySummary from './components/CountrySummary';
 import PredictionChart from './components/charts/PredictionChart';
+import PredictionsControls from './components/PredictionsControls';
 import Layout from '../Layout/Layout';
 
 ChartJS.register(
@@ -45,11 +46,9 @@ const Predictions: React.FC = () => {
   const selectedCountryData = selectedCountry ? countries.find(c => c.id_country === selectedCountry) : null;
   const selectedCountryNameFr = selectedCountryData ? capitalize(countryTranslations[selectedCountryData.name.toLowerCase()] || selectedCountryData.name) : '';
 
-  const handleFetch = () => {
-    fetchPredictions(startDate, endDate, selectedCountry);
+  const handleFetch = (startDate: string, endDate: string, countryId: number) => {
+    fetchPredictions(startDate, endDate, countryId);
   };
-
-  const isFormValid = startDate && endDate && selectedCountry;
 
   return (
     <Layout>
@@ -62,94 +61,18 @@ const Predictions: React.FC = () => {
         </p>
       </div>
 
-      {/* Contrôles de prédiction */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <TrendingUp className="h-5 w-5" />
-            <span>Paramètres de prédiction</span>
-          </CardTitle>
-          <CardDescription>
-            Sélectionnez une période et un pays pour générer des prédictions
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Date de début */}
-            <div className="space-y-2">
-              <Label htmlFor="start-date" className="flex items-center space-x-2">
-                <CalendarDays className="h-4 w-4" />
-                <span>Date de début</span>
-              </Label>
-              <Input
-                id="start-date"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full"
-              />
-            </div>
-
-            {/* Date de fin */}
-            <div className="space-y-2">
-              <Label htmlFor="end-date" className="flex items-center space-x-2">
-                <CalendarDays className="h-4 w-4" />
-                <span>Date de fin</span>
-              </Label>
-              <Input
-                id="end-date"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full"
-              />
-            </div>
-
-            {/* Sélection du pays */}
-            <div className="space-y-2">
-              <Label className="flex items-center space-x-2">
-                <Globe className="h-4 w-4" />
-                <span>Pays</span>
-              </Label>
-              <Select
-                value={selectedCountry?.toString() || ""}
-                onValueChange={(value) => setSelectedCountry(Number(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez un pays" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country.id_country} value={country.id_country.toString()}>
-                      {capitalize(countryTranslations[country.name.toLowerCase()] || country.name)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-6">
-            <Button 
-              onClick={handleFetch} 
-              disabled={!isFormValid || predictionsLoading}
-              className="px-8"
-            >
-              {predictionsLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Génération...
-                </>
-              ) : (
-                <>
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Générer les prédictions
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Contrôles de prédiction avec calendrier stylé */}
+      <PredictionsControls
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+        selectedCountry={selectedCountry}
+        setSelectedCountry={setSelectedCountry}
+        countries={countries}
+        onFetch={handleFetch}
+        disabled={predictionsLoading}
+      />
 
       {/* Messages d'erreur */}
       {predictionsError && (
@@ -196,7 +119,7 @@ const Predictions: React.FC = () => {
       )}
 
       {/* État vide */}
-      {!predictionsLoading && !predictionsError && predictions.length === 0 && isFormValid && (
+      {!predictionsLoading && !predictionsError && predictions.length === 0 && startDate && endDate && selectedCountry && (
         <Card>
           <CardContent className="text-center py-8">
             <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
