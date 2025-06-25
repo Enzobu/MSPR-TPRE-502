@@ -29,7 +29,8 @@ conn = get_connection()
 cur = conn.cursor()
 
 today = datetime.today().date()
-cur.execute("DELETE FROM prediction WHERE ds > %s", (today,))
+# cur.execute("DELETE FROM prediction WHERE ds > %s", (today,))
+cur.execute("DELETE FROM prediction")
 conn.commit()
 print("[INFO] Prédictions futures existantes supprimées.")
 
