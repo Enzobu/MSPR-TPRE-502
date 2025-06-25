@@ -8,6 +8,7 @@ import { Activity, User, Home, BarChart3 } from 'lucide-react';
 import whoEmblem from '../../assets/who-emblem.svg';
 import defaultAvatar from '../../assets/default-profile-avatar.png';
 import useLoggedUser from '../../hooks/useLoggedUser';
+import ThemeToggle from '../ThemeToggle/ThemeToggle';
 
 const Navbar: React.FC = () => {
   const isAuthenticated = useIsAuthenticated();
@@ -57,8 +58,10 @@ const Navbar: React.FC = () => {
           ))}
         </nav>
 
-        {/* Profil utilisateur */}
+        {/* Actions utilisateur */}
         <div className="flex items-center space-x-3">
+          <ThemeToggle />
+          
           {isAuthenticated && user ? (
             <Button variant="ghost" size="sm" asChild>
               <Link to="/profile" className="flex items-center space-x-2">
