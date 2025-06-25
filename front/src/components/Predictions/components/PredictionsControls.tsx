@@ -177,7 +177,7 @@ const PredictionsControls: React.FC<PredictionsControlsProps> = ({
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Sélectionnez un pays" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-60 overflow-y-auto">
               {countries.map(country => (
                 <SelectItem key={country.id_country} value={country.id_country.toString()}>
                   {capitalize(countryTranslations[country.name.toLowerCase()] || country.name)}
