@@ -59,8 +59,6 @@ class PredictionResource(Resource):
             today = datetime.today().date()
             max_end_date = today + timedelta(days=90)
 
-            if start_date < today:
-                return {'msg': "La date de début ne peut pas être antérieure à aujourd'hui"}, 400
             if end_date > max_end_date:
                 return {'msg': "La date de fin ne peut pas dépasser 3 mois à partir d'aujourd'hui"}, 400
 
