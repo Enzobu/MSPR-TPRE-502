@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import useUpdateUser from "../../hooks/useUpdateUser";
 import type { User, EditUserForm } from "../../types/types";
-import "./UserEdit.css";
 
 interface EditUserFormProps {
   user: User;

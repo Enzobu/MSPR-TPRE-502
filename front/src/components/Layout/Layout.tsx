@@ -1,16 +1,15 @@
-import type { ReactNode } from "react";
-import Navbar from "../Navbar/Navbar";
-import "./Layout.css";
+import React from 'react';
+import Navbar from '../Navbar/Navbar';
 
 interface LayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="layout">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="layout-content" role="main" id="main-content">
+      <main className="container mx-auto px-4 py-8">
         {children}
       </main>
     </div>

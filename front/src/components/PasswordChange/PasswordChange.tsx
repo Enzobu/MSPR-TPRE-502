@@ -1,7 +1,6 @@
 import { useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 import useLoggedUser from "../../hooks/useLoggedUser";
-import "./PasswordChange.css";
 
 const PasswordChange = () => {
   const authHeader = useAuthHeader();

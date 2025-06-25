@@ -1,98 +1,134 @@
-import { useState } from "react";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useSignIn from "react-auth-kit/hooks/useSignIn";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
 
-const fetchLogin = async (
-  email: string,
-  password: string
-): Promise<string | null> => {
-  try {
-    const res = await fetch(
-      "http://qg.enzo-palermo.com:5001/swagger/users/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      }
-    );
+import { Loader2, Mail, Lock, LogIn } from 'lucide-react';
 
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    return data.access_token || null;
-  } catch (err) {
-    console.error("Erreur fetchLogin :", err);
-    return null;
-  }
-};
-
-const UserLogin = () => {
+const UserLogin: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  
   const signIn = useSignIn();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+    if (!email || !password) {
+      setError("Veuillez remplir tous les champs");
+      setIsLoading(false);
+      return;
+    }
 
-    const token = await fetchLogin(email, password);
-
-    if (token) {
-      const success = signIn({
-        auth: {
-          token,
-          type: "Bearer",
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/swagger/users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        state: { email },
-      } as any);
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (success) {
-        navigate("/");
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        const signInSuccess = signIn({
+          auth: {
+            token: data.access_token,
+            type: "Bearer",
+          },
+          userState: {
+            email: email,
+          },
+        });
+
+        if (signInSuccess) {
+          navigate("/");
+        } else {
+          setError("Erreur lors de la connexion");
+        }
       } else {
-        alert("Erreur interne : impossible de stocker l'authentification.");
+        setError(data.message || "Identifiants incorrects");
       }
-    } else {
-      alert("Email et/ou mot de passe incorrect");
+    } catch (err) {
+      setError("Erreur de connexion au serveur");
+      console.log(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="globalContainer">
-      <form onSubmit={handleSubmit} className="loginForm">
-        <div className="inputContainer">
-          <label htmlFor="email">E-mail</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            placeholder="Entrez votre email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            aria-required="true"
-          />
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+          <p className="text-sm text-destructive font-medium">{error}</p>
         </div>
+      )}
 
-        <div className="inputContainer">
-          <label htmlFor="password">Mot de passe</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Entrez votre mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            aria-required="true"
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="email" className="flex items-center space-x-2">
+          <Mail className="h-4 w-4" />
+          <span>Email</span>
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="votre.email@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading}
+          className="w-full"
+        />
+      </div>
 
-        <button type="submit" className="loginCTA" aria-label="Se connecter">
-          Sign in
-        </button>
-      </form>
-    </div>
+      <div className="space-y-2">
+        <Label htmlFor="password" className="flex items-center space-x-2">
+          <Lock className="h-4 w-4" />
+          <span>Mot de passe</span>
+        </Label>
+        <Input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+          className="w-full"
+        />
+      </div>
+
+      <Button 
+        type="submit" 
+        className="w-full" 
+        disabled={isLoading}
+        size="lg"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            Connexion...
+          </>
+        ) : (
+          <>
+            <LogIn className="h-4 w-4 mr-2" />
+            Se connecter
+          </>
+        )}
+      </Button>
+
+      <div className="text-center text-sm text-muted-foreground">
+        <p>Utilisez vos identifiants WHO pour accéder à la plateforme</p>
+      </div>
+    </form>
   );
 };
 

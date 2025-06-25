@@ -1,5 +1,4 @@
 import useLoggedUser from '../../hooks/useLoggedUser';
-import './UserProfile.css';
 
 const UserProfile = () => {
   const { user: userLogged, loading, error } = useLoggedUser();
