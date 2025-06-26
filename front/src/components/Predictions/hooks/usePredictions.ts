@@ -28,22 +28,20 @@ export function usePredictions() {
         method: 'GET',
         headers: {
           'Authorization': authHeader,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         }
       });
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch predictions: ${response.status} ${errorText}`);
+        throw new Error(`Erreur HTTP: ${response.status}`);
       }
       const data = await response.json();
       if (!Array.isArray(data)) {
         throw new Error('Invalid data format received from server');
       }
       setPredictions(data);
-      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Erreur lors de la récupération des prédictions');
+      setPredictions([]);
     } finally {
       setLoading(false);
     }

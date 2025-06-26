@@ -80,7 +80,7 @@ const PredictionChart: React.FC<PredictionChartProps> = ({ predictions, countryN
   };
 
   return (
-    <div className="w-full h-96 mt-8">
+    <div className="w-full h-96 mt-8" data-testid="prediction-chart-container">
       <Line data={chartData} options={options} />
     </div>
   );

@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { MapPin, Users, DollarSign, Globe, Flag } from 'lucide-react';
 import { getFlagEmojiFromIso3 } from '../../../utils/flagUtils';
+import { countryTranslations } from '../../../data/countryTranslations';
+import { capitalize } from '../utils/capitalize';
 import type { Country } from '../../../types/types';
 
 interface CountrySummaryProps {
@@ -32,6 +34,7 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
   };
 
   const flagEmoji = getFlagEmojiFromIso3(country.iso_code);
+  const translatedName = capitalize(countryTranslations[country.name.toLowerCase()] || country.name);
 
   return (
     <Card className="w-full">
@@ -40,7 +43,7 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
           <CardTitle className="flex items-center space-x-3">
             <div className="text-3xl">{flagEmoji}</div>
             <div>
-              <h2 className="text-2xl font-bold">{country.name}</h2>
+              <h2 className="text-2xl font-bold">{translatedName}</h2>
               <p className="text-muted-foreground text-sm">
                 Code ISO: {country.iso_code}
               </p>
