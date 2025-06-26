@@ -95,10 +95,6 @@ const PredictionsControls: React.FC<PredictionsControlsProps> = ({
                   mode="single"
                   selected={startDate ? new Date(startDate) : undefined}
                   onSelect={handleStartDateSelect}
-                  disabled={(date) => {
-                    if (minStartDate && date < minStartDate) return true;
-                    return false;
-                  }}
                   initialFocus
                   locale={fr}
                   className="rounded-md border-0 p-3"
