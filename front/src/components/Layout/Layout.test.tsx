@@ -12,18 +12,18 @@ describe('Layout', () => {
   });
 
   it('devrait afficher la barre de navigation', () => {
-    // On vérifie un élément clé de la Navbar pour confirmer sa présence
-    expect(screen.getByRole('link', { name: /accueil/i })).toBeInTheDocument();
+    // On vérifie qu'il y a bien les liens "Accueil" de la Navbar (desktop + mobile)
+    expect(screen.getAllByRole('link', { name: /accueil/i })).toHaveLength(2);
   });
 
   it('devrait afficher le contenu enfant passé au composant', () => {
     expect(screen.getByText('Contenu enfant')).toBeInTheDocument();
   });
 
-  it('devrait avoir la structure correcte avec main et role', () => {
+  it('devrait avoir la structure correcte avec main element', () => {
     const mainElement = screen.getByRole('main');
     expect(mainElement).toBeInTheDocument();
-    expect(mainElement).toHaveAttribute('id', 'main-content');
+    expect(mainElement).toHaveClass('container', 'mx-auto', 'px-4', 'py-8');
   });
 
   it('devrait afficher plusieurs éléments enfants', () => {
