@@ -31,34 +31,36 @@ describe('HomePage', () => {
     render(<HomePage />);
   });
 
-  it("devrait afficher le titre 'Tableau de bord'", () => {
-    expect(screen.getByText('Tableau de bord')).toBeInTheDocument();
+  it("devrait afficher le titre principal 'AnalyzeIt'", () => {
+    expect(screen.getByRole('heading', { name: /analyzeit prédictions santé/i })).toBeInTheDocument();
   });
 
-  it("devrait afficher le lien de navigation 'Accueil'", () => {
-    expect(screen.getByRole('link', { name: /accueil/i })).toBeInTheDocument();
+  it("devrait afficher le premier lien de navigation 'Accueil'", () => {
+    const accueilLinks = screen.getAllByRole('link', { name: /accueil/i });
+    expect(accueilLinks.length).toBeGreaterThan(0); // Vérifie qu'il y a au moins un lien Accueil
+    expect(accueilLinks[0]).toBeInTheDocument();
   });
 
-  it("devrait afficher le lien de navigation 'Compte'", () => {
-    expect(screen.getByRole('link', { name: /compte/i })).toBeInTheDocument();
+  it("devrait afficher le lien 'Mon compte'", () => {
+    expect(screen.getByRole('link', { name: /mon compte/i })).toBeInTheDocument();
   });
 
-  it("devrait afficher le bouton de déconnexion", () => {
-    expect(screen.getByRole('button', { name: /déconnexion/i })).toBeInTheDocument();
+  it("devrait afficher le bouton de changement de thème", () => {
+    expect(screen.getByRole('button', { name: /changer le thème/i })).toBeInTheDocument();
   });
 
-  it("devrait avoir la structure de page correcte", () => {
-    const homePageElement = screen.getByText('Tableau de bord').closest('.home-page');
-    expect(homePageElement).toBeInTheDocument();
+  it("devrait avoir la structure de page correcte avec le logo WHO", () => {
+    expect(screen.getByAltText('WHO Logo')).toBeInTheDocument();
   });
 
-  it("devrait afficher le composant Predictions", () => {
-    // Vérifier que le composant Predictions est rendu en cherchant un élément spécifique
-    expect(screen.getByText('Tableau de bord')).toBeInTheDocument();
+  it("devrait afficher les fonctionnalités principales", () => {
+    expect(screen.getByText('Fonctionnalités Principales')).toBeInTheDocument();
   });
 
-  it("devrait avoir le titre en tant qu'élément h1", () => {
-    const titleElement = screen.getByRole('heading', { level: 1 });
-    expect(titleElement).toHaveTextContent('Tableau de bord');
+  it("devrait avoir le titre principal en tant qu'élément h1", () => {
+    const titleElements = screen.getAllByRole('heading', { level: 1 });
+    const mainTitle = titleElements.find(el => el.textContent?.includes('AnalyzeIt'));
+    expect(mainTitle).toBeInTheDocument();
+    expect(mainTitle).toHaveTextContent('AnalyzeIt');
   });
 }); 
