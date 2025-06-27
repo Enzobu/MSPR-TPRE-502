@@ -1,11 +1,14 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useCreateUser } from './useCreateUser';
+import useCreateUser from './useCreateUser';
+import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 
 // Mock de react-auth-kit
 vi.mock('react-auth-kit/hooks/useAuthHeader', () => ({
-  default: () => 'Bearer mock-token'
+  default: vi.fn()
 }));
+
+const mockUseAuthHeader = vi.mocked(useAuthHeader);
 
 // Mock de fetch
 global.fetch = vi.fn();
@@ -13,6 +16,7 @@ global.fetch = vi.fn();
 describe('useCreateUser', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseAuthHeader.mockReturnValue('Bearer mock-token');
   });
 
   it('devrait initialiser avec des valeurs par défaut', () => {
@@ -48,18 +52,17 @@ describe('useCreateUser', () => {
 
     const { result } = renderHook(() => useCreateUser());
 
-    result.current.createUser(formData);
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+    await act(async () => {
+      await result.current.createUser(formData);
     });
 
     expect(result.current.createdUser).toEqual(mockUser);
     expect(result.current.error).toBeNull();
+    expect(result.current.loading).toBe(false);
   });
 
   it('devrait gérer l\'absence de token d\'authentification', async () => {
-    vi.mocked(require('react-auth-kit/hooks/useAuthHeader')).default.mockReturnValue(null);
+    mockUseAuthHeader.mockReturnValue(null);
 
     const { result } = renderHook(() => useCreateUser());
 
@@ -71,9 +74,13 @@ describe('useCreateUser', () => {
       isAdmin: false
     };
 
-    result.current.createUser(formData);
+    await act(async () => {
+      await result.current.createUser(formData);
+    });
 
     expect(result.current.error).toBe("Token d'authentification manquant.");
+    expect(result.current.createdUser).toBeNull();
+    expect(result.current.loading).toBe(false);
   });
 
   it('devrait gérer les erreurs de création', async () => {
@@ -89,14 +96,13 @@ describe('useCreateUser', () => {
       isAdmin: false
     };
 
-    result.current.createUser(formData);
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+    await act(async () => {
+      await result.current.createUser(formData);
     });
 
     expect(result.current.error).toBe("Erreur lors de la création de l'utilisateur.");
     expect(result.current.createdUser).toBeNull();
+    expect(result.current.loading).toBe(false);
   });
 
   it('devrait gérer les erreurs HTTP', async () => {
@@ -115,14 +121,13 @@ describe('useCreateUser', () => {
       isAdmin: false
     };
 
-    result.current.createUser(formData);
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+    await act(async () => {
+      await result.current.createUser(formData);
     });
 
     expect(result.current.error).toBe("Erreur lors de la création de l'utilisateur.");
     expect(result.current.createdUser).toBeNull();
+    expect(result.current.loading).toBe(false);
   });
 
   it('devrait appeler l\'API avec les bons paramètres', async () => {
@@ -141,25 +146,32 @@ describe('useCreateUser', () => {
       isAdmin: false
     };
 
-    result.current.createUser(formData);
-
-    await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        'http://qg.enzo-palermo.com:5001/swagger/users',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer mock-token',
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+    await act(async () => {
+      await result.current.createUser(formData);
     });
+
+    expect(fetch).toHaveBeenCalledWith(
+      'http://qg.enzo-palermo.com:5001/swagger/users',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer mock-token',
+        },
+        body: JSON.stringify(formData),
+      }
+    );
   });
 
   it('devrait gérer l\'état de chargement', async () => {
-    (fetch as any).mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+    (fetch as any).mockImplementation(() => 
+      new Promise((resolve) => 
+        setTimeout(() => resolve({
+          ok: true,
+          json: async () => ({})
+        }), 100)
+      )
+    );
 
     const { result } = renderHook(() => useCreateUser());
 
@@ -171,12 +183,21 @@ describe('useCreateUser', () => {
       isAdmin: false
     };
 
-    result.current.createUser(formData);
-
-    expect(result.current.loading).toBe(true);
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+    let createPromise: Promise<void>;
+    
+    act(() => {
+      createPromise = result.current.createUser(formData);
     });
+
+    // Vérifier que l'état de loading est mis à jour
+    await waitFor(() => {
+      expect(result.current.loading).toBe(true);
+    });
+
+    await act(async () => {
+      await createPromise;
+    });
+
+    expect(result.current.loading).toBe(false);
   });
 }); 
