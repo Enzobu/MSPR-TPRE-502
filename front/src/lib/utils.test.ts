@@ -39,8 +39,9 @@ describe('cn', () => {
     )).toBe('base static conditional active array1 array2');
   });
 
-  it('devrait gérer les doublons', () => {
-    expect(cn('class1', 'class1', 'class2')).toBe('class1 class2');
+  it('devrait conserver les doublons de classes génériques', () => {
+    // cn utilise twMerge qui ne supprime pas les doublons de classes non-Tailwind
+    expect(cn('class1', 'class1', 'class2')).toBe('class1 class1 class2');
   });
 
   it('devrait gérer les espaces multiples', () => {
