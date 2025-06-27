@@ -72,4 +72,66 @@ export const getFlagEmojiFromIso2 = (iso2: string): string => {
     .split('')
     .map(char => String.fromCodePoint(127397 + char.charCodeAt(0)))
     .join('');
+};
+
+// Liste des codes ISO2 valides (pour validation)
+const validIso2Codes = new Set([
+  'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ',
+  'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS',
+  'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN',
+  'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE',
+  'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF',
+  'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM',
+  'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM',
+  'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC',
+  'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK',
+  'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA',
+  'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG',
+  'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW',
+  'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS',
+  'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO',
+  'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI',
+  'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW'
+]);
+
+/**
+ * Génère un émoji de drapeau à partir d'un code pays (ISO2 ou ISO3)
+ * Fonction polyvalente qui gère différents formats de codes pays
+ * @param countryCode - Code du pays (ISO2 ou ISO3, ex: "FR", "FRA")
+ * @returns Émoji du drapeau correspondant ou drapeau blanc si invalide
+ */
+export const getCountryFlag = (countryCode?: string | null): string => {
+  // Gérer les valeurs null, undefined ou vides
+  if (!countryCode || typeof countryCode !== 'string') {
+    return '🏳️';
+  }
+
+  // Nettoyer le code (supprimer les espaces)
+  const cleanCode = countryCode.trim().toUpperCase();
+  
+  if (!cleanCode) {
+    return '🏳️';
+  }
+
+  // Si c'est un code ISO2 (2 caractères)
+  if (cleanCode.length === 2) {
+    // Vérifier que c'est un code ISO2 valide
+    if (validIso2Codes.has(cleanCode)) {
+      try {
+        return getFlagEmojiFromIso2(cleanCode);
+      } catch {
+        return '🏳️';
+      }
+    } else {
+      return '🏳️';
+    }
+  }
+  
+  // Si c'est un code ISO3 (3 caractères)
+  if (cleanCode.length === 3) {
+    return getFlagEmojiFromIso3(cleanCode);
+  }
+
+  // Pour tous les autres cas (codes invalides)
+  return '🏳️';
 }; 
