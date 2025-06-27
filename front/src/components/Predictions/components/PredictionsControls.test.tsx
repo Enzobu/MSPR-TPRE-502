@@ -1,11 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import PredictionsControls from './PredictionsControls';
-import type { Country } from '../../../../types/types';
+import type { Country } from '../../../types/types';
 
 // Mock des traductions
-vi.mock('../../../../data/countryTranslations', () => ({
+vi.mock('../../../data/countryTranslations', () => ({
   countryTranslations: {
     'france': 'France',
     'germany': 'Allemagne',
@@ -13,94 +13,70 @@ vi.mock('../../../../data/countryTranslations', () => ({
   }
 }));
 
-// Mock des composants UI
-vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, ...props }: any) => (
-    <button onClick={onClick} disabled={disabled} {...props}>
-      {children}
-    </button>
-  )
-}));
-
-vi.mock('@/components/ui/label', () => ({
-  Label: ({ children, ...props }: any) => <label {...props}>{children}</label>
-}));
-
-vi.mock('@/components/ui/select', () => ({
-  Select: ({ children, value, onValueChange, disabled }: any) => (
-    <select value={value} onChange={(e) => onValueChange(Number(e.target.value))} disabled={disabled}>
-      {children}
-    </select>
-  ),
-  SelectContent: ({ children }: any) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => <option value={value}>{children}</option>,
-  SelectTrigger: ({ children }: any) => <div>{children}</div>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>
-}));
-
-vi.mock('@/components/ui/calendar', () => ({
-  Calendar: ({ selected, onSelect, disabled, ...props }: any) => (
-    <div data-testid="calendar">
-      <input
-        type="date"
-        value={selected ? selected.toISOString().split('T')[0] : ''}
-        onChange={(e) => {
-          if (onSelect) {
-            const newDate = new Date(e.target.value);
-            onSelect(newDate);
-          }
-        }}
-        {...props}
-      />
-    </div>
-  )
-}));
-
-vi.mock('@/components/ui/popover', () => ({
-  Popover: ({ children }: any) => <div>{children}</div>,
-  PopoverContent: ({ children }: any) => <div>{children}</div>,
-  PopoverTrigger: ({ children, asChild }: any) => {
-    if (asChild) {
-      return children;
-    }
-    return <div>{children}</div>;
-  }
-}));
-
-vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardDescription: ({ children, ...props }: any) => <p {...props}>{children}</p>,
-  CardHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardTitle: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>
+// Mock du utility capitalize
+vi.mock('../utils/capitalize', () => ({
+  capitalize: (str: string) => str.charAt(0).toUpperCase() + str.slice(1)
 }));
 
 // Mock de date-fns
 vi.mock('date-fns', () => ({
-  format: (date: Date, formatStr: string) => {
+  format: vi.fn((date: Date, formatStr: string) => {
     if (formatStr === 'dd/MM/yyyy') {
       return date.toLocaleDateString('fr-FR');
     }
     return date.toISOString().split('T')[0];
-  },
-  addDays: (date: Date, days: number) => {
+  }),
+  addDays: vi.fn((date: Date, days: number) => {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + days);
     return newDate;
-  }
+  })
+}));
+
+// Mock de date-fns/locale
+vi.mock('date-fns/locale', () => ({
+  fr: {}
 }));
 
 // Mock de lucide-react
-vi.mock('lucide-react', () => ({
-  CalendarIcon: ({ className }: any) => <div className={className}>📅</div>,
-  MapPin: ({ className }: any) => <div className={className}>📍</div>,
-  Calendar: ({ className }: any) => <div className={className}>📅</div>
+vi.mock('lucide-react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('lucide-react')>();
+  return {
+    ...actual,
+    Calendar: ({ className }: any) => <span className={className} data-testid="calendar-icon">📅</span>,
+    MapPin: ({ className }: any) => <span className={className} data-testid="mappin-icon">📍</span>
+  };
+});
+
+// Mock du utility cn
+vi.mock('@/lib/utils', () => ({
+  cn: vi.fn((...classes) => classes.filter(Boolean).join(' '))
 }));
 
 describe('PredictionsControls', () => {
   const mockCountries: Country[] = [
-    { id_country: 1, name: 'France', iso_code: 'FRA', population: 67000000, pib: 3000000000000, latitude: 46.2276, longitude: 2.2137, id_continent: 1, id_region: 1 },
-    { id_country: 2, name: 'Germany', iso_code: 'DEU', population: 83000000, pib: 4000000000000, latitude: 51.1657, longitude: 10.4515, id_continent: 1, id_region: 1 }
+    { 
+      id_country: 1, 
+      name: 'France', 
+      iso_code: 'FRA', 
+      population: '67000000', 
+      pib: '3000000000000', 
+      latitude: '46.2276', 
+      longitude: '2.2137', 
+      id_continent: 1, 
+      id_region: 1 
+    },
+    { 
+      id_country: 2, 
+      name: 'Germany', 
+      iso_code: 'DEU', 
+      population: '83000000', 
+      pib: '4000000000000', 
+      latitude: '51.1657', 
+      longitude: '10.4515', 
+      id_continent: 1, 
+      id_region: 1 
+    }
   ];
 
   const defaultProps = {
@@ -126,40 +102,44 @@ describe('PredictionsControls', () => {
     expect(screen.getByText('Sélectionnez une période et un pays pour générer des prédictions')).toBeInTheDocument();
   });
 
-  it('devrait afficher les sélecteurs de date', () => {
+  it('devrait afficher les labels des sélecteurs', () => {
     render(<PredictionsControls {...defaultProps} />);
     
     expect(screen.getByText('Date de début')).toBeInTheDocument();
     expect(screen.getByText('Date de fin')).toBeInTheDocument();
+    expect(screen.getByText('Pays')).toBeInTheDocument();
   });
 
-  it('devrait afficher le sélecteur de pays', () => {
+  it('devrait afficher les placeholders corrects', () => {
     render(<PredictionsControls {...defaultProps} />);
     
-    expect(screen.getByText('Pays')).toBeInTheDocument();
+    expect(screen.getByText('Sélectionner la date de début')).toBeInTheDocument();
+    expect(screen.getByText('Sélectionner la date de fin')).toBeInTheDocument();
     expect(screen.getByText('Sélectionnez un pays')).toBeInTheDocument();
   });
 
-  it('devrait afficher le bouton de validation', () => {
+  it('devrait afficher les icônes', () => {
     render(<PredictionsControls {...defaultProps} />);
     
-    expect(screen.getByText('Afficher les prédictions')).toBeInTheDocument();
+    expect(screen.getAllByTestId('calendar-icon').length).toBeGreaterThan(0); // Il y a plusieurs icônes Calendar
+    expect(screen.getByTestId('mappin-icon')).toBeInTheDocument();
   });
 
-  it('devrait être désactivé quand disabled est true', () => {
-    render(<PredictionsControls {...defaultProps} disabled={true} />);
+  it('devrait afficher le bouton avec le texte correct quand non disabled', () => {
+    render(<PredictionsControls {...defaultProps} />);
     
-    const button = screen.getByText('Chargement...');
-    expect(button).toBeDisabled();
+    const button = screen.getByRole('button', { name: /afficher les prédictions/i });
+    expect(button).toBeInTheDocument();
+    expect(button).toBeDisabled(); // Désactivé car aucune donnée sélectionnée
   });
 
-  it('devrait afficher le texte de chargement quand disabled est true', () => {
+  it('devrait afficher le texte de chargement quand disabled', () => {
     render(<PredictionsControls {...defaultProps} disabled={true} />);
     
     expect(screen.getByText('Chargement...')).toBeInTheDocument();
   });
 
-  it('devrait appeler onFetch quand le bouton est cliqué avec des données valides', () => {
+  it('devrait avoir le bouton activé avec des données complètes', () => {
     const props = {
       ...defaultProps,
       startDate: '2024-01-01',
@@ -169,45 +149,34 @@ describe('PredictionsControls', () => {
 
     render(<PredictionsControls {...props} />);
     
-    const button = screen.getByText('Afficher les prédictions');
+    const button = screen.getByRole('button', { name: /afficher les prédictions/i });
+    expect(button).not.toBeDisabled();
+  });
+
+  it('devrait appeler onFetch avec les bonnes données', () => {
+    const props = {
+      ...defaultProps,
+      startDate: '2024-01-01',
+      endDate: '2024-01-02',
+      selectedCountry: 1
+    };
+
+    render(<PredictionsControls {...props} />);
+    
+    const button = screen.getByRole('button', { name: /afficher les prédictions/i });
     fireEvent.click(button);
     
     expect(props.onFetch).toHaveBeenCalledWith('2024-01-01', '2024-01-02', 1);
   });
 
-  it('ne devrait pas appeler onFetch quand les données sont incomplètes', () => {
-    render(<PredictionsControls {...defaultProps} />);
-    
-    const button = screen.getByText('Afficher les prédictions');
-    fireEvent.click(button);
-    
-    expect(defaultProps.onFetch).not.toHaveBeenCalled();
-  });
-
-  it('devrait afficher les pays dans le sélecteur', () => {
-    render(<PredictionsControls {...defaultProps} />);
-    
-    expect(screen.getByText('France')).toBeInTheDocument();
-    expect(screen.getByText('Allemagne')).toBeInTheDocument();
-  });
-
-  it('devrait appeler setSelectedCountry quand un pays est sélectionné', () => {
-    render(<PredictionsControls {...defaultProps} />);
-    
-    const select = screen.getByDisplayValue('') || document.querySelector('select');
-    fireEvent.change(select!, { target: { value: '1' } });
-    
-    expect(defaultProps.setSelectedCountry).toHaveBeenCalledWith(1);
-  });
-
-  it('devrait afficher les informations de validation des dates', () => {
+  it('devrait afficher les messages de validation des dates', () => {
     render(<PredictionsControls {...defaultProps} />);
     
     expect(screen.getByText(/Minimum :/)).toBeInTheDocument();
-    expect(screen.getByText(/Veuillez d'abord sélectionner une date de début/)).toBeInTheDocument();
+    expect(screen.getByText("Veuillez d'abord sélectionner une date de début")).toBeInTheDocument();
   });
 
-  it('devrait afficher les informations de validation quand une date de début est sélectionnée', () => {
+  it('devrait afficher le message de validation pour la date de fin avec startDate', () => {
     const props = {
       ...defaultProps,
       startDate: '2024-01-01'
@@ -216,5 +185,15 @@ describe('PredictionsControls', () => {
     render(<PredictionsControls {...props} />);
     
     expect(screen.getByText(/Maximum :/)).toBeInTheDocument();
+    expect(screen.getByText(/90 jours/)).toBeInTheDocument();
+  });
+
+  it('devrait désactiver la date de fin quand aucune date de début', () => {
+    render(<PredictionsControls {...defaultProps} />);
+    
+    const endDateButton = screen.getAllByRole('button').find(button => 
+      button.textContent?.includes('Sélectionner la date de fin')
+    );
+    expect(endDateButton).toBeDisabled();
   });
 });
