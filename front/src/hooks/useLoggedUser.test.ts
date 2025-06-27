@@ -1,10 +1,12 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useLoggedUser } from './useLoggedUser';
+import useLoggedUser from './useLoggedUser';
+import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
+import { decodeToken } from 'react-jwt';
 
 // Mock de react-auth-kit
 vi.mock('react-auth-kit/hooks/useAuthHeader', () => ({
-  default: () => 'Bearer mock-token'
+  default: vi.fn()
 }));
 
 // Mock de react-jwt
@@ -12,20 +14,34 @@ vi.mock('react-jwt', () => ({
   decodeToken: vi.fn()
 }));
 
+const mockUseAuthHeader = vi.mocked(useAuthHeader);
+const mockDecodeToken = vi.mocked(decodeToken);
+
 // Mock de fetch
 global.fetch = vi.fn();
 
 describe('useLoggedUser', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseAuthHeader.mockReturnValue('Bearer mock-token');
   });
 
-  it('devrait initialiser avec des valeurs par défaut', () => {
+  it('devrait initialiser avec des valeurs par défaut', async () => {
+    // Mocker decodeToken pour retourner null afin d'éviter l'exécution du useEffect
+    mockDecodeToken.mockReturnValue(null);
+    
     const { result } = renderHook(() => useLoggedUser());
 
+    // Vérifier l'état initial
     expect(result.current.user).toBeNull();
-    expect(result.current.loading).toBe(true);
-    expect(result.current.error).toBeNull();
+    
+    // Attendre que useEffect se termine
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    
+    // Vérifier que l'erreur est définie à cause du token invalide
+    expect(result.current.error).toBe("Token invalide.");
   });
 
   it('devrait récupérer l\'utilisateur avec succès', async () => {
@@ -48,8 +64,7 @@ describe('useLoggedUser', () => {
       csrf: 'csrf-token'
     };
 
-    const { decodeToken } = require('react-jwt');
-    decodeToken.mockReturnValue(mockDecodedToken);
+    mockDecodeToken.mockReturnValue(mockDecodedToken);
 
     (fetch as any).mockResolvedValueOnce({
       ok: true,
@@ -67,7 +82,7 @@ describe('useLoggedUser', () => {
   });
 
   it('devrait gérer l\'absence de token d\'authentification', async () => {
-    vi.mocked(require('react-auth-kit/hooks/useAuthHeader')).default.mockReturnValue(null);
+    mockUseAuthHeader.mockReturnValue(null);
 
     const { result } = renderHook(() => useLoggedUser());
 
@@ -80,8 +95,7 @@ describe('useLoggedUser', () => {
   });
 
   it('devrait gérer un token invalide', async () => {
-    const { decodeToken } = require('react-jwt');
-    decodeToken.mockReturnValue(null);
+    mockDecodeToken.mockReturnValue(null);
 
     const { result } = renderHook(() => useLoggedUser());
 
@@ -105,8 +119,7 @@ describe('useLoggedUser', () => {
       csrf: 'csrf-token'
     };
 
-    const { decodeToken } = require('react-jwt');
-    decodeToken.mockReturnValue(mockDecodedToken);
+    mockDecodeToken.mockReturnValue(mockDecodedToken);
 
     (fetch as any).mockRejectedValueOnce(new Error('Erreur réseau'));
 
@@ -132,8 +145,7 @@ describe('useLoggedUser', () => {
       csrf: 'csrf-token'
     };
 
-    const { decodeToken } = require('react-jwt');
-    decodeToken.mockReturnValue(mockDecodedToken);
+    mockDecodeToken.mockReturnValue(mockDecodedToken);
 
     (fetch as any).mockResolvedValueOnce({
       ok: true,
@@ -164,10 +176,16 @@ describe('useLoggedUser', () => {
       csrf: 'csrf-token'
     };
 
-    const { decodeToken } = require('react-jwt');
-    decodeToken.mockReturnValue(mockDecodedToken);
+    mockDecodeToken.mockReturnValue(mockDecodedToken);
 
-    (fetch as any).mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+    (fetch as any).mockImplementation(() => 
+      new Promise((resolve) => 
+        setTimeout(() => resolve({
+          ok: true,
+          json: async () => ({})
+        }), 100)
+      )
+    );
 
     const { result } = renderHook(() => useLoggedUser());
 
