@@ -217,4 +217,4 @@ describe('PredictionsControls', () => {
     
     expect(screen.getByText(/Maximum :/)).toBeInTheDocument();
   });
-}); 
+});
