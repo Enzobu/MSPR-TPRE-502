@@ -7,7 +7,7 @@ vi.mock('react-chartjs-2', () => ({
   Line: ({ data, options }: any) => (
     <div data-testid="mortality-chart">
       <div data-testid="chart-data">{JSON.stringify(data)}</div>
-      <div data-testid="chart-options">{JSON.stringify(options, (value) => 
+      <div data-testid="chart-options">{JSON.stringify(options, (_key, value) => 
         typeof value === 'function' ? '[Function]' : value
       )}</div>
     </div>
