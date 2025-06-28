@@ -3,15 +3,65 @@
 
 ---
 
-## 🎯 Introduction
+### 🎯 Introduction
+Ce guide pratique a été conçu pour accompagner les équipes projet dans la mise en œuvre de l’accessibilité numérique sur l’application Analyze It, une plateforme d’analyse épidémiologique.
 
-Ce guide pratique fournit des instructions concrètes pour implémenter l'accessibilité dans le projet **Analyze It**. Il s'adresse aux développeurs, designers et testeurs qui travaillent sur l'application.
+L’accessibilité numérique vise à garantir que tous les utilisateurs — y compris ceux en situation de handicap (visuel, auditif, moteur, cognitif) — puissent accéder aux contenus, naviguer dans l’interface, et interagir avec les fonctionnalités sans obstacles. Elle s’appuie sur les normes WCAG 2.1 niveau AA, les bonnes pratiques ARIA, et des outils de tests spécifiques.
 
-### Objectifs du guide
-- **Standardiser** les pratiques d'accessibilité
-- **Faciliter** l'implémentation pour les développeurs
-- **Assurer** la conformité WCAG 2.1 AA
-- **Améliorer** l'expérience utilisateur pour tous
+#### Pourquoi ce guide ?
+Ce document vise à :
+
+- Intégrer l’accessibilité dès la conception, et non comme une correction a posteriori
+- Clarifier les attentes techniques et fournir des exemples concrets
+- Sensibiliser les équipes au rôle crucial de l’inclusion numérique
+- Assurer la conformité légale et anticiper les obligations du RGAA ou d'autres référentiels
+
+### 🌍 Pourquoi faire de l’accessibilité ?
+#### ✔️ Une obligation légale
+Dans de nombreux pays, dont la France (via le RGAA), l’accessibilité est une obligation pour les services publics, et fortement recommandée pour le secteur privé. Ne pas s’y conformer peut exposer à des sanctions, ou à des risques d’image.
+
+#### 🤝 Une démarche inclusive
+1 personne sur 6 dans le monde vit avec un handicap. Concevoir une interface accessible, c’est permettre à chacun — quelle que soit sa situation — d’utiliser votre service de façon autonome et équitable.
+
+#### 📈 Une meilleure qualité globale
+Les bonnes pratiques d’accessibilité améliorent aussi :
+
+- La clarté des interfaces
+- La navigation au clavier
+- La performance SEO (liée à une sémantique propre)
+- L’expérience utilisateur mobile, souvent proche des besoins en accessibilité
+
+#### 🚀 Une robustesse technique accrue
+Le respect des standards rend l'application plus :
+
+- Compatible avec les lecteurs d'écran et navigateurs variés
+- Maintenable, grâce à une structure HTML propre et cohérente
+- Pérenne, avec des pratiques codées dans les outils de CI/CD
+
+### 🔄 Conduite du changement
+L'accessibilité ne s’ajoute pas à la fin : elle se conçoit, se développe, se teste et s’améliore en continu. Voici quelques leviers de mise en œuvre progressive :
+
+#### 🧠 1. Sensibiliser l’équipe
+Organiser des sessions courtes pour :
+
+- Comprendre les types de handicaps
+- Expérimenter avec des lecteurs d’écran ou la navigation au clavier
+- Montrer des cas concrets de mauvaise accessibilité
+
+#### 🔧 2. Intégrer dans les process
+- Ajouter des critères d'accessibilité dans les définitions de "done"
+- Utiliser ESLint + axe + tests Vitest/Jest dans les pipelines CI
+- Faire des revues de code avec un œil a11y
+
+#### 📆 3. Planifier les audits réguliers
+- Audit automatisé (axe, Lighthouse) à chaque release
+- Tests manuels mensuels, avec une check-list
+- Retours utilisateurs (ex. via formulaires anonymes)
+
+#### 📚 4. Documenter et former
+- Maintenir ce guide à jour
+- Documenter les composants accessibles dans une design system
+- Organiser des formations internes régulières (ateliers dev + design)
 
 ---
 
@@ -537,17 +587,8 @@ interface AccessibilityMetrics {
 
 ---
 
-## 📞 Support et Contacts
+## 🔗 Ressources
 
-### Équipe Accessibilité
-- **Lead Accessibility** : [Nom] - [email]
-- **Accessibility Tester** : [Nom] - [email]
-- **UX Designer** : [Nom] - [email]
-
-### Ressources Internes
-- **Slack** : #accessibility
-- **Documentation** : [Lien vers la doc]
-- **Formations** : [Lien vers les formations]
 
 ### Ressources Externes
 - **WCAG 2.1** : https://www.w3.org/WAI/WCAG21/quickref/
