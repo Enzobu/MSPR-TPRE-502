@@ -1,6 +1,5 @@
 import { useState } from "react";
 import useCreateUser from "../../hooks/useCreateUser";
-import "./UserAdd.css";
 
 interface UserAddProps {
   onSuccess?: () => void;

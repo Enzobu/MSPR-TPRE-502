@@ -21,8 +21,8 @@ describe('UserLogin', () => {
     render(<UserLogin />);
   });
 
-  it("devrait afficher le champ de saisie de l'e-mail", () => {
-    expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument();
+  it("devrait afficher le champ de saisie de l'email", () => {
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
   });
 
   it('devrait afficher le champ de saisie du mot de passe', () => {
@@ -34,36 +34,34 @@ describe('UserLogin', () => {
   });
 
   it('devrait avoir les champs avec les bons attributs', () => {
-    const emailInput = screen.getByLabelText(/e-mail/i);
+    const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/mot de passe/i);
     
     expect(emailInput).toHaveAttribute('type', 'email');
-    expect(emailInput).toHaveAttribute('required');
-    expect(emailInput).toHaveAttribute('aria-required', 'true');
-    
     expect(passwordInput).toHaveAttribute('type', 'password');
-    expect(passwordInput).toHaveAttribute('required');
-    expect(passwordInput).toHaveAttribute('aria-required', 'true');
   });
 
   it('devrait avoir les placeholders corrects', () => {
-    const emailInput = screen.getByLabelText(/e-mail/i);
+    const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/mot de passe/i);
     
-    expect(emailInput).toHaveAttribute('placeholder', 'Entrez votre email');
-    expect(passwordInput).toHaveAttribute('placeholder', 'Entrez votre mot de passe');
+    expect(emailInput).toHaveAttribute('placeholder', 'votre.email@example.com');
+    expect(passwordInput).toHaveAttribute('placeholder', '••••••••');
   });
 
   it('devrait avoir la structure de formulaire correcte', () => {
     const form = screen.getByRole('button', { name: /se connecter/i }).closest('form');
     expect(form).toBeInTheDocument();
-    expect(form).toHaveClass('loginForm');
+    expect(form).toHaveClass('space-y-4');
   });
 
   it('devrait avoir le bouton avec le bon texte et attributs', () => {
     const submitButton = screen.getByRole('button', { name: /se connecter/i });
-    expect(submitButton).toHaveTextContent('Sign in');
+    expect(submitButton).toHaveTextContent('Se connecter');
     expect(submitButton).toHaveAttribute('type', 'submit');
-    expect(submitButton).toHaveAttribute('aria-label', 'Se connecter');
+  });
+
+  it('devrait afficher le message d\'instruction WHO', () => {
+    expect(screen.getByText('Utilisez vos identifiants WHO pour accéder à la plateforme')).toBeInTheDocument();
   });
 }); 

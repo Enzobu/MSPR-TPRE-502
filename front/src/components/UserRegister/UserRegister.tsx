@@ -1,4 +1,4 @@
-import "./UserRegister.css";
+
 
 function UserRegister() {
   return (

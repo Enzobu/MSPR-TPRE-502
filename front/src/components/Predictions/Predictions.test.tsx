@@ -28,21 +28,31 @@ vi.mock('./hooks/useCountries', () => ({
   })),
 }));
 
+// Mock du hook useMortalityRate
+vi.mock('./hooks/useMortalityRate', () => ({
+  useMortalityRate: vi.fn(() => ({
+    mortalityData: null,
+    loading: false,
+    error: null,
+    fetchMortalityRate: vi.fn(),
+  })),
+}));
+
 describe('Predictions', () => {
   beforeEach(() => {
     render(<Predictions />);
   });
 
   it('devrait afficher le champ pour la date de début', () => {
-    expect(screen.getByText('Date de début:')).toBeInTheDocument();
+    expect(screen.getByText('Date de début')).toBeInTheDocument();
   });
 
   it('devrait afficher le champ pour la date de fin', () => {
-    expect(screen.getByText('Date de fin:')).toBeInTheDocument();
+    expect(screen.getByText('Date de fin')).toBeInTheDocument();
   });
 
   it('devrait afficher la sélection du pays', () => {
-    expect(screen.getByText('Pays:')).toBeInTheDocument();
+    expect(screen.getByText('Pays')).toBeInTheDocument();
   });
 
   it("devrait afficher le bouton 'Afficher les prédictions'", () => {

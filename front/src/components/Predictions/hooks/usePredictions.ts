@@ -23,27 +23,25 @@ export function usePredictions() {
     }
     try {
       setLoading(true);
-      const url = `http://qg.enzo-palermo.com:5001/swagger/predictions?disease_id=1&start_date=${startDate}&end_date=${endDate}&country_id=${selectedCountry}`;
+      const url = `${import.meta.env.VITE_API_URL}/swagger/predictions/get?disease_id=1&start_date=${startDate}&end_date=${endDate}&country_id=${selectedCountry}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Authorization': authHeader,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         }
       });
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch predictions: ${response.status} ${errorText}`);
+        throw new Error(`Erreur HTTP: ${response.status}`);
       }
       const data = await response.json();
       if (!Array.isArray(data)) {
         throw new Error('Invalid data format received from server');
       }
       setPredictions(data);
-      setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Erreur lors de la récupération des prédictions');
+      setPredictions([]);
     } finally {
       setLoading(false);
     }

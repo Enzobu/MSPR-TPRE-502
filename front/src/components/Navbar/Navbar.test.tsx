@@ -8,40 +8,34 @@ describe('Navbar', () => {
   });
 
   it("devrait afficher le logo et le nom du site", () => {
-    expect(screen.getByText('Analyze It')).toBeInTheDocument();
-    expect(screen.getByAltText('Analyze It')).toBeInTheDocument();
+    expect(screen.getByText('AnalyzeIt')).toBeInTheDocument();
+    expect(screen.getByAltText('WHO Logo')).toBeInTheDocument();
   });
 
   it("devrait afficher le lien 'Accueil'", () => {
-    expect(screen.getByRole('link', { name: 'Accueil' })).toBeInTheDocument();
+    // Il y a deux liens "Accueil" (desktop et mobile), on vérifie qu'au moins un existe
+    expect(screen.getAllByRole('link', { name: 'Accueil' })).toHaveLength(2);
   });
 
-  it("devrait afficher le lien 'Compte'", () => {
-    expect(screen.getByRole('link', { name: 'Compte' })).toBeInTheDocument();
+  it("devrait afficher le lien 'Prédictions'", () => {
+    // Il y a deux liens "Prédictions" (desktop et mobile), on vérifie qu'au moins un existe
+    expect(screen.getAllByRole('link', { name: 'Prédictions' })).toHaveLength(2);
   });
 
-  it("devrait afficher le bouton 'Déconnexion'", () => {
-    expect(screen.getByRole('button', { name: 'Déconnexion' })).toBeInTheDocument();
+  it("devrait afficher le lien 'Connexion' quand l'utilisateur n'est pas authentifié", () => {
+    expect(screen.getByRole('link', { name: 'Connexion' })).toBeInTheDocument();
   });
 
   it("devrait avoir la structure de navigation correcte", () => {
-    const navElement = screen.getByRole('navigation');
-    expect(navElement).toBeInTheDocument();
-    expect(navElement).toHaveAttribute('aria-label', 'Navigation principale');
+    const navElements = screen.getAllByRole('navigation');
+    expect(navElements).toHaveLength(2); // Navigation desktop et mobile
   });
 
-  it("devrait avoir les liens avec les bonnes classes CSS", () => {
-    const accueilLink = screen.getByRole('link', { name: 'Accueil' });
-    const compteLink = screen.getByRole('link', { name: 'Compte' });
-    
-    expect(accueilLink).toHaveClass('nav-link');
-    expect(compteLink).toHaveClass('nav-link');
+  it("devrait afficher le badge WHO", () => {
+    expect(screen.getByText('WHO')).toBeInTheDocument();
   });
 
-  it("devrait avoir le bouton de déconnexion avec les bons attributs", () => {
-    const logoutButton = screen.getByRole('button', { name: 'Déconnexion' });
-    expect(logoutButton).toHaveClass('nav-link', 'logout-button');
-    expect(logoutButton).toHaveAttribute('type', 'button');
-    expect(logoutButton).toHaveAttribute('aria-label', 'Déconnexion');
+  it("devrait avoir le bouton de changement de thème", () => {
+    expect(screen.getByRole('button', { name: 'Changer le thème' })).toBeInTheDocument();
   });
 }); 
