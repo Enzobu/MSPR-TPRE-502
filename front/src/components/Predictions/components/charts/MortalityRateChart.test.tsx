@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import MortalityRateChart from './MortalityRateChart';
@@ -8,7 +7,7 @@ vi.mock('react-chartjs-2', () => ({
   Line: ({ data, options }: any) => (
     <div data-testid="mortality-chart">
       <div data-testid="chart-data">{JSON.stringify(data)}</div>
-      <div data-testid="chart-options">{JSON.stringify(options, (key, value) => 
+      <div data-testid="chart-options">{JSON.stringify(options, (value) => 
         typeof value === 'function' ? '[Function]' : value
       )}</div>
     </div>
@@ -22,9 +21,9 @@ describe('MortalityRateChart', () => {
     start_date: "2024-01-01",
     end_date: "2024-01-03",
     mortality_rate: [
-      { "2024-01-01": 0.018808039797055132 },
-      { "2024-01-02": 0.018808039797055132 },
-      { "2024-01-03": 0.018808039797055132 }
+      { "2024-01-01": 0.018808039797055132 } as { [date: string]: number },
+      { "2024-01-02": 0.018808039797055132 } as { [date: string]: number },
+      { "2024-01-03": 0.018808039797055132 } as { [date: string]: number }
     ]
   };
 

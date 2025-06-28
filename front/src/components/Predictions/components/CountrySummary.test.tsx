@@ -1,8 +1,8 @@
-import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import CountrySummary from './CountrySummary';
-import type { Country } from '../../../../types/types';
+import type { Country } from '@/types/types';
+
 
 // Mock de React pour éviter les erreurs de hooks
 vi.mock('react', async () => {
@@ -28,10 +28,10 @@ describe('CountrySummary', () => {
     id_country: 1,
     name: 'Germany',
     iso_code: 'DEU',
-    population: 83000000,
-    pib: 4000000000000,
-    latitude: 51.17,
-    longitude: 10.45,
+    population: '83000000',
+    pib: '4000000000000',
+    latitude: '51.17',
+    longitude: '10.45',
     id_continent: 1,
     id_region: 1
   };
@@ -40,10 +40,10 @@ describe('CountrySummary', () => {
     id_country: 2,
     name: 'Spain',
     iso_code: 'ESP',
-    population: 47000000,
-    pib: 1500000000000,
-    latitude: 40.46,
-    longitude: -3.75,
+    population: '47000000',
+    pib: '1500000000000',
+    latitude: '40.46',
+    longitude: '-3.75',
     id_continent: 1,
     id_region: 1
   };
