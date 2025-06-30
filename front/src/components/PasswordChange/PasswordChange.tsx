@@ -41,7 +41,6 @@ const PasswordChange = () => {
       return;
     }
 
-    // facultatif : vérifier oldPassword côté client si tu l'as en mémoire
     setLoading(true);
     try {
       const res = await fetch(
@@ -71,11 +70,13 @@ const PasswordChange = () => {
   };
 
   return (
-    <div className="passwordSection">
-      <h2>Changer le mot de passe</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="oldPassword">
-          Ancien mot de passe :
+    <div className="max-w-md mx-auto mt-10 p-6 rounded-xl shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center">Changer le mot de passe</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="oldPassword" className="block mb-1 font-medium">
+            Ancien mot de passe
+          </label>
           <input
             id="oldPassword"
             type="password"
@@ -83,11 +84,14 @@ const PasswordChange = () => {
             value={formData.oldPassword}
             onChange={handleChange}
             required
-            aria-required="true"
+            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
           />
-        </label>
-        <label htmlFor="newPassword">
-          Nouveau mot de passe :
+        </div>
+
+        <div>
+          <label htmlFor="newPassword" className="block mb-1 font-medium">
+            Nouveau mot de passe
+          </label>
           <input
             id="newPassword"
             type="password"
@@ -95,11 +99,14 @@ const PasswordChange = () => {
             value={formData.newPassword}
             onChange={handleChange}
             required
-            aria-required="true"
+            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
           />
-        </label>
-        <label htmlFor="confirmPassword">
-          Confirmer le nouveau mot de passe :
+        </div>
+
+        <div>
+          <label htmlFor="confirmPassword" className="block mb-1 font-medium">
+            Confirmer le nouveau mot de passe
+          </label>
           <input
             id="confirmPassword"
             type="password"
@@ -107,14 +114,28 @@ const PasswordChange = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
             required
-            aria-required="true"
+            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
           />
-        </label>
-        <button type="submit" disabled={loading} aria-label="Mettre à jour le mot de passe">
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-2 px-4 rounded-lg border border-gray-400 hover:bg-gray-100 transition"
+        >
           {loading ? "Mise à jour..." : "Mettre à jour"}
         </button>
-        {error && <p style={{ color: "red" }} aria-live="polite">{error}</p>}
-        {success && <p style={{ color: "green" }} aria-live="polite">{success}</p>}
+
+        {error && (
+          <p className="text-sm mt-2" aria-live="polite">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-sm mt-2" aria-live="polite">
+            {success}
+          </p>
+        )}
       </form>
     </div>
   );

@@ -14,6 +14,8 @@ const Navbar: React.FC = () => {
   const isAuthenticated = useIsAuthenticated();
   const { user } = useLoggedUser();
   const location = useLocation();
+  const isUserLoading = isAuthenticated && !user;
+
 
   const navItems = [
     { path: '/', label: 'Accueil', icon: Home },
@@ -27,9 +29,9 @@ const Navbar: React.FC = () => {
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo et titre */}
         <div className="flex items-center space-x-3">
-          <img 
-            src={whoEmblem} 
-            alt="WHO Logo" 
+          <img
+            src={whoEmblem}
+            alt="WHO Logo"
             className="h-10 w-10"
           />
           <div className="flex items-center space-x-2">
@@ -61,8 +63,10 @@ const Navbar: React.FC = () => {
         {/* Actions utilisateur */}
         <div className="flex items-center space-x-3">
           <ThemeToggle />
-          
-          {isAuthenticated && user ? (
+
+          {isUserLoading ? (
+            <div className="w-24 h-8 rounded-md bg-muted animate-pulse" />
+          ) : isAuthenticated && user ? (
             <Button variant="ghost" size="sm" asChild>
               <Link to="/profile" className="flex items-center space-x-2">
                 <Avatar className="h-8 w-8">
