@@ -33,28 +33,6 @@ export interface DecodedToken {
   csrf: string;
 }
 
-export interface Prediction {
-  id_prediction: number;
-  id_country: number;
-  id_disease: number;
-  ds: string;
-  yhat: number;
-  yhat_lower: number;
-  yhat_upper: number;
-  trend: number;
-  trend_lower: number;
-  trend_upper: number;
-  deaths: number;
-  deaths_lower: number;
-  deaths_upper: number;
-  pib: number;
-  pib_lower: number;
-  pib_upper: number;
-  population: number;
-  population_lower: number;
-  population_upper: number;
-}
-
 export interface Country {
   id_country: number;
   name: string;

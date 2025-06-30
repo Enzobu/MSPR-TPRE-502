@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { usePredictions } from './usePredictions';
+import { useTransmission } from './useTransmission';
 
 // Mock de react-auth-kit
 vi.mock('react-auth-kit/hooks/useAuthHeader', () => ({
@@ -10,30 +10,30 @@ vi.mock('react-auth-kit/hooks/useAuthHeader', () => ({
 // Mock de fetch
 global.fetch = vi.fn();
 
-describe('usePredictions', () => {
+describe('useTransmission', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('devrait initialiser avec des valeurs par défaut', () => {
-    const { result } = renderHook(() => usePredictions());
+    const { result } = renderHook(() => useTransmission());
 
-    expect(result.current.predictions).toEqual([]);
+    expect(result.current.transmissionRate).toEqual([]);
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
-    expect(typeof result.current.fetchPredictions).toBe('function');
+    expect(typeof result.current.fetchTransmissionRate).toBe('function');
   });
 
-  it('devrait avoir la fonction fetchPredictions', () => {
-    const { result } = renderHook(() => usePredictions());
-    expect(typeof result.current.fetchPredictions).toBe('function');
+  it('devrait avoir la fonction fetchTransmission', () => {
+    const { result } = renderHook(() => useTransmission());
+    expect(typeof result.current.fetchTransmissionRate).toBe('function');
   });
 
   it('devrait gérer les paramètres manquants', async () => {
-    const { result } = renderHook(() => usePredictions());
+    const { result } = renderHook(() => useTransmission());
     
     // Test avec des paramètres manquants
-    await result.current.fetchPredictions('', '', null);
+    await result.current.fetchTransmissionRate('', '', 0);
     expect(result.current.error).toBe(null);
   });
 
@@ -43,10 +43,10 @@ describe('usePredictions', () => {
       default: () => null
     }));
     
-    const { usePredictions: usePredictionsNoAuth } = await import('./usePredictions');
-    const { result } = renderHook(() => usePredictionsNoAuth());
+    const { useTransmission: useTransmissionNoAuth } = await import('./useTransmission');
+    const { result } = renderHook(() => useTransmissionNoAuth());
     
-    await result.current.fetchPredictions('2024-01-01', '2024-01-02', 1);
+    await result.current.fetchTransmissionRate('2024-01-01', '2024-01-02', 1);
     expect(result.current.error).toBe(null);
   });
 }); 
