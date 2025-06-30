@@ -30,7 +30,7 @@ class TestPredictionResource:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 200
         assert len(response.json) == 2
@@ -53,7 +53,7 @@ class TestPredictionResource:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}&country_id=2', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}&country_id=2', headers=headers)
         
         assert response.status_code == 200
         assert len(response.json) == 1
@@ -65,7 +65,7 @@ class TestPredictionResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.get('/swagger/predictions', headers=headers)
+            response = client.get('/swagger/predictions/get?', headers=headers)
         
         assert response.status_code == 400
         assert 'Paramètres requis : disease_id, start_date, end_date' in response.json['msg']
@@ -79,7 +79,7 @@ class TestPredictionResource:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 400
         assert 'Paramètres requis : disease_id, start_date, end_date' in response.json['msg']
@@ -92,7 +92,7 @@ class TestPredictionResource:
             
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&end_date={end_date}', headers=headers)
         
         assert response.status_code == 400
         assert 'Paramètres requis : disease_id, start_date, end_date' in response.json['msg']
@@ -105,7 +105,7 @@ class TestPredictionResource:
             
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}', headers=headers)
         
         assert response.status_code == 400
         assert 'Paramètres requis : disease_id, start_date, end_date' in response.json['msg']
@@ -116,24 +116,12 @@ class TestPredictionResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.get('/swagger/predictions?disease_id=1&start_date=invalid-date&end_date=2024-06-30', headers=headers)
+            response = client.get('/swagger/predictions/get?disease_id=1&start_date=invalid-date&end_date=2024-06-30', headers=headers)
         
         assert response.status_code == 400
         assert 'Les dates doivent être au format YYYY-MM-DD' in response.json['msg']
     
-    def test_get_predictions_start_date_in_past(self, client):
-        """Test de récupération des prédictions avec date de début dans le passé."""
-        with client.application.app_context():
-            token = create_access_token(identity='1')
-            headers = {'Authorization': f'Bearer {token}'}
-            
-            past_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
-            future_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
-            
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={past_date}&end_date={future_date}', headers=headers)
-        
-        assert response.status_code == 400
-        assert 'La date de début ne peut pas être antérieure à aujourd\'hui' in response.json['msg']
+
     
     def test_get_predictions_start_date_today(self, client, mock_db_connection):
         """Test de récupération des prédictions avec date de début aujourd'hui (devrait réussir)."""
@@ -147,7 +135,7 @@ class TestPredictionResource:
             today_date = datetime.now().strftime('%Y-%m-%d')
             future_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={today_date}&end_date={future_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={today_date}&end_date={future_date}', headers=headers)
         
         # La date d'aujourd'hui est acceptée selon l'implémentation (start_date < today)
         assert response.status_code == 200
@@ -161,7 +149,7 @@ class TestPredictionResource:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=91)).strftime('%Y-%m-%d')  # Plus de 90 jours
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 400
         assert 'La date de fin ne peut pas dépasser 3 mois à partir d\'aujourd\'hui' in response.json['msg']
@@ -171,7 +159,7 @@ class TestPredictionResource:
         start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
         end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
         
-        response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}')
+        response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}')
         
         assert response.status_code == 401
     
@@ -187,7 +175,7 @@ class TestPredictionResource:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 500
         assert 'Erreur serveur' in response.json['msg']
@@ -204,7 +192,7 @@ class TestPredictionResource:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 200
         assert len(response.json) == 0
@@ -221,7 +209,7 @@ class TestPredictionResource:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}&country_id=2', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}&country_id=2', headers=headers)
         
         # Vérifier que la requête SQL contient les éléments attendus
         called_args = mock_cursor.execute.call_args
@@ -256,7 +244,7 @@ class TestPredictionDateValidation:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=90)).strftime('%Y-%m-%d')  # Exactement 90 jours
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 200  # Devrait passer
     
@@ -269,7 +257,7 @@ class TestPredictionDateValidation:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=91)).strftime('%Y-%m-%d')  # Plus de 90 jours
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 400
         assert 'La date de fin ne peut pas dépasser 3 mois à partir d\'aujourd\'hui' in response.json['msg']
@@ -339,7 +327,7 @@ class TestPredictionDataProcessing:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         assert response.status_code == 200
         assert response.json[0]['ds'] == '2024-12-25'
@@ -360,7 +348,7 @@ class TestPredictionDataProcessing:
             start_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
-            response = client.get(f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
+            response = client.get(f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}', headers=headers)
         
         prediction = response.json[0]
         

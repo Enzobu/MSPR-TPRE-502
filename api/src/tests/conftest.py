@@ -16,10 +16,10 @@ sys.modules['psycopg2'] = mock_psycopg2
 sys.modules['psycopg2.extras'] = mock_psycopg2.extras
 
 # Ajouter le répertoire src au path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 # Import corrigé pour l'application Flask
-app_file_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'app.py')
+app_file_path = os.path.join(os.path.dirname(__file__), '..', 'app.py')
 if not os.path.exists(app_file_path):
     # Si on est dans le container, le chemin est différent
     app_file_path = '/app/app.py'
@@ -44,8 +44,7 @@ def test_app():
 def client(test_app):
     """Fixture pour le client de test Flask."""
     with test_app.test_client() as client:
-        with test_app.app_context():
-            yield client
+        yield client
 
 
 @pytest.fixture(scope='function')

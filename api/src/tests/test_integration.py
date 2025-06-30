@@ -34,7 +34,7 @@ class TestFullAPIIntegration:
         """Test que tous les endpoints principaux nécessitent une authentification."""
         endpoints_to_test = [
             ('GET', '/user/users'),
-            ('GET', '/swagger/predictions'),
+            ('GET', '/swagger/predictions/get?'),
         ]
         
         for method, endpoint in endpoints_to_test:
@@ -96,7 +96,7 @@ class TestFullAPIIntegration:
         
         namespaces_endpoints = [
             ('/user/users/login', 'POST'),  # Login endpoint accept POST
-            ('/swagger/predictions', 'GET'),
+            ('/swagger/predictions/get?', 'GET'),
         ]
         
         for endpoint, method in namespaces_endpoints:
@@ -130,7 +130,7 @@ class TestDataFlowIntegration:
             end_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
             
             predictions_response = client.get(
-                f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}&country_id=1',
+                f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}&country_id=1',
                 headers=headers
             )
             assert predictions_response.status_code == 200
@@ -190,7 +190,7 @@ class TestAPIPerformanceAndLimits:
             end_date = (datetime.now() + timedelta(days=100)).strftime('%Y-%m-%d')
             
             response = client.get(
-                f'/swagger/predictions?disease_id=1&start_date={start_date}&end_date={end_date}',
+                f'/swagger/predictions/get?disease_id=1&start_date={start_date}&end_date={end_date}',
                 headers=headers
             )
             assert response.status_code == 400
@@ -208,7 +208,7 @@ class TestAPIPerformanceAndLimits:
             # Simuler plusieurs requêtes simultanées
             responses = []
             for _ in range(5):  # Réduisons à 5 pour éviter la surcharge
-                response = client.get('/swagger/predictions?disease_id=1&start_date=2024-12-01&end_date=2024-12-02', headers=headers)
+                response = client.get('/swagger/predictions/get?disease_id=1&start_date=2024-12-01&end_date=2024-12-02', headers=headers)
                 responses.append(response)
             
             # Toutes les requêtes doivent réussir
