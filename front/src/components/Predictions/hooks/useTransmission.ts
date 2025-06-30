@@ -1,26 +1,26 @@
 import { useState } from "react";
 import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
 
-interface MortalityRateData {
+interface TransmissionRateData {
   [date: string]: number;
 }
 
-interface MortalityRateResponse {
+interface TransmissionRateResponse {
   country_id: string;
   disease_id: string;
   start_date: string;
   end_date: string;
-  mortality_rate: MortalityRateData[];
+  transmission_rate: TransmissionRateData[];
 }
 
-export const useMortalityRate = () => {
-  const [mortalityData, setMortalityData] =
-    useState<MortalityRateResponse | null>(null);
+export function useTransmission() {
+  const [transmissionRate, setTransmissionRate] =
+    useState<TransmissionRateResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const authHeader = useAuthHeader();
 
-  const fetchMortalityRate = async (
+  const fetchTransmissionRate = async (
     startDate: string,
     endDate: string,
     countryId: number,
@@ -37,7 +37,7 @@ export const useMortalityRate = () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL
-        }/swagger/predictions/mortality-rate?disease_id=${diseaseId}&start_date=${startDate}&end_date=${endDate}&country_id=${countryId}`,
+        }/swagger/predictions/transmission-rate?disease_id=${diseaseId}&start_date=${startDate}&end_date=${endDate}&country_id=${countryId}`,
         {
           method: "GET",
           headers: {
@@ -51,24 +51,19 @@ export const useMortalityRate = () => {
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
-      const data: MortalityRateResponse = await response.json();
-      setMortalityData(data);
+      const data: TransmissionRateResponse = await response.json();
+      setTransmissionRate(data);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Erreur lors de la récupération du taux de mortalité"
+          : "Erreur lors de la récupération du taux de transmission"
       );
-      setMortalityData(null);
+      setTransmissionRate(null);
     } finally {
       setLoading(false);
     }
   };
 
-  return {
-    mortalityData,
-    loading,
-    error,
-    fetchMortalityRate,
-  };
-};
+  return { transmissionRate, loading, error, fetchTransmissionRate };
+}

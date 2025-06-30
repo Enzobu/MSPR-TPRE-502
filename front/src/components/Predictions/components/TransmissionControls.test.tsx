@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import PredictionsControls from './PredictionsControls';
+import PredictionsControls from './TransmissionControls';
 import type { Country } from '../../../types/types';
 
 // Mock des traductions
