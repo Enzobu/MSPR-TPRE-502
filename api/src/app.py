@@ -58,7 +58,7 @@ api.add_namespace(country_climat_type_controller.country_climat_type_namespace, 
 api.add_namespace(disease_controller.disease_namespace, path='/swagger')
 api.add_namespace(region_controller.region_namespace, path='/swagger')
 api.add_namespace(statement_controller.statement_namespace, path='/swagger')
-api.add_namespace(login_controller.user_namespace)
+api.add_namespace(login_controller.user_namespace, path='/swagger')
 api.add_namespace(prediction_controller.prediction_namespace, path='/swagger')
 
 db_connection = get_db_connection()
