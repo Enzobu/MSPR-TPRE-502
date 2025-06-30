@@ -33,7 +33,7 @@ class TestFullAPIIntegration:
     def test_api_endpoints_require_authentication(self, client):
         """Test que tous les endpoints principaux nécessitent une authentification."""
         endpoints_to_test = [
-            ('GET', '/user/users'),
+            ('GET', '/swagger/users'),
             ('GET', '/swagger/predictions/get?'),
         ]
         
@@ -69,7 +69,7 @@ class TestFullAPIIntegration:
             headers = {'Authorization': f'Bearer {token}'}
             
             # Tester un endpoint qui devrait retourner une erreur avec des données invalides
-            response = client.post('/user/users', headers=headers, json={
+            response = client.post('/swagger/users', headers=headers, json={
                 'invalid_field': 'invalid_value'
             })
             # L'endpoint devrait gérer gracieusement les erreurs
@@ -154,7 +154,7 @@ class TestDataFlowIntegration:
             ]
             
             # Admin peut voir tous les utilisateurs
-            users_response = client.get('/user/users', headers=headers)
+            users_response = client.get('/swagger/users', headers=headers)
             assert users_response.status_code == 200
             assert len(users_response.json) == 2
     
@@ -170,7 +170,7 @@ class TestDataFlowIntegration:
             mock_cursor.fetchone.return_value = (False,)  # User is not admin
             
             # Non-admin ne peut pas voir tous les utilisateurs
-            users_response = client.get('/user/users', headers=headers)
+            users_response = client.get('/swagger/users', headers=headers)
             assert users_response.status_code == 403
 
 
@@ -232,7 +232,7 @@ class TestAPISecurityIntegration:
         
         for token in malformed_tokens:
             headers = {'Authorization': token}
-            response = client.get('/user/users', headers=headers)
+            response = client.get('/swagger/users', headers=headers)
             assert response.status_code in [401, 422]  # Unauthorized ou Unprocessable Entity
     
     def test_invalid_json_handling(self, client):

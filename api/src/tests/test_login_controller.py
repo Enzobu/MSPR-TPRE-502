@@ -122,7 +122,7 @@ class TestUserListResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.get('/user/users', headers=headers)
+            response = client.get('/swagger/users', headers=headers)
         
         assert response.status_code == 200
         assert len(response.json) == 2
@@ -138,14 +138,14 @@ class TestUserListResource:
             token = create_access_token(identity='2')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.get('/user/users', headers=headers)
+            response = client.get('/swagger/users', headers=headers)
         
         assert response.status_code == 403
         # Flask-RESTX peut renvoyer différents formats, l'important est le code 403
     
     def test_get_users_unauthorized(self, client):
         """Test de récupération des utilisateurs sans token."""
-        response = client.get('/user/users')
+        response = client.get('/swagger/users')
         assert response.status_code == 401
     
     def test_create_user_success(self, client, mock_db_connection, sample_user_data):
@@ -155,7 +155,7 @@ class TestUserListResource:
         # Mock pour vérifier que l'email n'existe pas déjà, puis retourner le nouvel ID
         mock_cursor.fetchone.side_effect = [None, (1,)]  # Email check, then new ID
         
-        response = client.post('/user/users', json=sample_user_data)
+        response = client.post('/swagger/users', json=sample_user_data)
         
         assert response.status_code == 201
         assert response.json['firstname'] == 'John'
@@ -164,14 +164,14 @@ class TestUserListResource:
     
     def test_create_user_invalid_data(self, client):
         """Test de création d'utilisateur avec données invalides."""
-        response = client.post('/user/users', json={})
+        response = client.post('/swagger/users', json={})
         assert response.status_code == 400
         # Le contrôleur peut renvoyer soit "Donnees invalides" soit le message sur la structure
         assert response.json['msg'] in ['Veuillez respecter la structure de la table', 'Donnees invalides']
     
     def test_create_user_missing_fields(self, client):
         """Test de création d'utilisateur avec champs manquants."""
-        response = client.post('/user/users', json={
+        response = client.post('/swagger/users', json={
             'firstname': 'John',
             'email': 'john@example.com'
             # Manque lastname, password, isAdmin
@@ -184,7 +184,7 @@ class TestUserListResource:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.fetchone.return_value = (1,)  # Email existe déjà
         
-        response = client.post('/user/users', json=sample_user_data)
+        response = client.post('/swagger/users', json=sample_user_data)
         
         assert response.status_code == 400
         assert 'Email dejà utilise' in response.json['msg']
@@ -194,7 +194,7 @@ class TestUserListResource:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.execute.side_effect = Exception("Database error")
         
-        response = client.post('/user/users', json=sample_user_data)
+        response = client.post('/swagger/users', json=sample_user_data)
         
         assert response.status_code == 500
         assert 'Erreur serveur' in response.json['msg']
@@ -212,7 +212,7 @@ class TestUserResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.get('/user/users/1', headers=headers)
+            response = client.get('/swagger/users/1', headers=headers)
         
         assert response.status_code == 200
         assert response.json['firstname'] == 'John'
@@ -227,7 +227,7 @@ class TestUserResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.get('/user/users/999', headers=headers)
+            response = client.get('/swagger/users/999', headers=headers)
         
         assert response.status_code == 404
         # La réponse peut être en format différent selon Flask-RESTX
@@ -248,7 +248,7 @@ class TestUserResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.put('/user/users/1', headers=headers, json={
+            response = client.put('/swagger/users/1', headers=headers, json={
                 'firstname': 'John Updated',
                 'email': 'john.updated@example.com'
             })
@@ -265,7 +265,7 @@ class TestUserResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.put('/user/users/999', headers=headers, json={
+            response = client.put('/swagger/users/999', headers=headers, json={
                 'firstname': 'John Updated'
             })
         
@@ -281,7 +281,7 @@ class TestUserResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.delete('/user/users/1', headers=headers)
+            response = client.delete('/swagger/users/1', headers=headers)
         
         assert response.status_code == 200
         assert 'supprime' in response.json['msg']
@@ -295,7 +295,7 @@ class TestUserResource:
             token = create_access_token(identity='1')
             headers = {'Authorization': f'Bearer {token}'}
             
-            response = client.delete('/user/users/999', headers=headers)
+            response = client.delete('/swagger/users/999', headers=headers)
         
         assert response.status_code == 404
         assert 'Utilisateur non trouve' in response.json['msg']
