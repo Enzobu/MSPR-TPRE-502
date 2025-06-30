@@ -20,7 +20,7 @@ class TestLoginResource:
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         mock_cursor.fetchone.return_value = (1, hashed_password)
         
-        response = client.post('/user/users/login', json={
+        response = client.post('/swagger/users/login', json={
             'email': 'test@example.com',
             'password': password
         })
@@ -31,14 +31,14 @@ class TestLoginResource:
     
     def test_login_missing_data(self, client):
         """Test de login avec données manquantes."""
-        response = client.post('/user/users/login', json={})
+        response = client.post('/swagger/users/login', json={})
         assert response.status_code == 400
         # Le contrôleur renvoie d'abord "Donnees invalides" si le JSON est vide
         assert response.json['msg'] in ['Email et mot de passe requis', 'Donnees invalides']
     
     def test_login_invalid_json(self, client):
         """Test de login avec JSON invalide."""
-        response = client.post('/user/users/login', data='invalid json', 
+        response = client.post('/swagger/users/login', data='invalid json', 
                              content_type='application/json')
         # Un JSON invalide peut causer une erreur serveur 500
         assert response.status_code in [400, 500]
@@ -47,7 +47,7 @@ class TestLoginResource:
     
     def test_login_missing_email(self, client):
         """Test de login avec email manquant."""
-        response = client.post('/user/users/login', json={
+        response = client.post('/swagger/users/login', json={
             'password': 'password123'
         })
         assert response.status_code == 400
@@ -55,7 +55,7 @@ class TestLoginResource:
     
     def test_login_missing_password(self, client):
         """Test de login avec mot de passe manquant."""
-        response = client.post('/user/users/login', json={
+        response = client.post('/swagger/users/login', json={
             'email': 'test@example.com'
         })
         assert response.status_code == 400
@@ -66,7 +66,7 @@ class TestLoginResource:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.fetchone.return_value = None
         
-        response = client.post('/user/users/login', json={
+        response = client.post('/swagger/users/login', json={
             'email': 'nonexistent@example.com',
             'password': 'password123'
         })
@@ -80,7 +80,7 @@ class TestLoginResource:
         hashed_password = bcrypt.hashpw('correct_password'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         mock_cursor.fetchone.return_value = (1, hashed_password)
         
-        response = client.post('/user/users/login', json={
+        response = client.post('/swagger/users/login', json={
             'email': 'test@example.com',
             'password': 'wrong_password'
         })
@@ -93,7 +93,7 @@ class TestLoginResource:
         mock_conn, mock_cursor = mock_db_connection
         mock_cursor.execute.side_effect = Exception("Database error")
         
-        response = client.post('/user/users/login', json={
+        response = client.post('/swagger/users/login', json={
             'email': 'test@example.com',
             'password': 'password123'
         })

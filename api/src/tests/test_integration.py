@@ -22,7 +22,7 @@ class TestFullAPIIntegration:
             assert protected_response.status_code == 200
         
         # Test que l'endpoint de login est accessible
-        login_response = client.post('/user/users/login', json={
+        login_response = client.post('/swagger/users/login', json={
             'email': 'test@example.com',
             'password': 'wrongpassword'
         })
@@ -95,7 +95,7 @@ class TestFullAPIIntegration:
         # Tester que les endpoints de base sont accessibles
         
         namespaces_endpoints = [
-            ('/user/users/login', 'POST'),  # Login endpoint accept POST
+            ('/swagger/users/login', 'POST'),  # Login endpoint accept POST
             ('/swagger/predictions/get?', 'GET'),
         ]
         
@@ -237,7 +237,7 @@ class TestAPISecurityIntegration:
     
     def test_invalid_json_handling(self, client):
         """Test de gestion de JSON invalide."""
-        response = client.post('/user/users/login', 
+        response = client.post('/swagger/users/login', 
                               data='invalid json', 
                               content_type='application/json')
         # Devrait gérer gracieusement le JSON invalide
