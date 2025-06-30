@@ -42,7 +42,9 @@ def check_if_admin():
         user_id = get_jwt_identity()
         cur.execute("SELECT isAdmin FROM users WHERE id_user = %s", (user_id,))
         user = cur.fetchone()
-        return user and user[0] is True
+        if user:
+            return user[0] is True
+        return False
 
 @user_namespace.route('/users/login')
 class LoginResource(Resource):

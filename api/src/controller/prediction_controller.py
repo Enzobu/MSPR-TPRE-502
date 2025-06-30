@@ -121,7 +121,7 @@ class PredictionResource(Resource):
                 return predictions, 200
 
         except Exception as e:
-            return {'msg': f"Erreur serveur : {str(e)}"}, 500
+            return {'msg': "Erreur serveur"}, 500
 
 @prediction_namespace.route('/predictions/transmission-rate')
 class TransmissionRateResource(Resource):
