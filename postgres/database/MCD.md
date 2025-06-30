@@ -1,59 +1,96 @@
 ```mermaid
 erDiagram
     disease {
-        SERIAL id_disease PK
+        INT id_disease PK
+        STRING name
         BOOLEAN is_pandemic
-        VARCHAR(50) name
     }
 
     statement {
-        SERIAL id_statement PK
+        INT id_statement PK
         DATE _date
-        INTEGER confirmed
-        INTEGER deaths
-        INTEGER recovered
-        INTEGER active
-        INTEGER total_tests
-        INTEGER id_disease FK
-        INTEGER id_country FK
-    }
-    statement ||--|| disease : "references"
-    statement ||--|| country : "references"
-
-    region {
-        SERIAL id_region PK
-        VARCHAR(50) name
+        FLOAT confirmed
+        FLOAT deaths
+        FLOAT recovered
+        FLOAT active
+        FLOAT total_tests
+        INT id_disease FK
+        INT id_country FK
     }
 
-    continent {
-        SERIAL id_continent PK
-        VARCHAR(50) name
+    prediction {
+        INT id_prediction PK
+        DATE ds
+        FLOAT yhat
+        FLOAT yhat_lower
+        FLOAT yhat_upper
+        FLOAT trend
+        FLOAT trend_lower
+        FLOAT trend_upper
+        FLOAT deaths
+        FLOAT deaths_lower
+        FLOAT deaths_upper
+        FLOAT pib
+        FLOAT pib_lower
+        FLOAT pib_upper
+        FLOAT population
+        FLOAT population_lower
+        FLOAT population_upper
+        INT id_country FK
+        INT id_disease FK
     }
 
     country {
-        SERIAL id_country PK
-        VARCHAR(50) name
-        VARCHAR(5) iso_code
-        INTEGER population
-        DOUBLE pib
-        DOUBLE latitude
-        DOUBLE longitude
-        INTEGER id_region FK
-        INTEGER id_continent FK
+        INT id_country PK
+        STRING name
+        STRING iso_code
+        INT population
+        FLOAT pib
+        FLOAT latitude
+        FLOAT longitude
+        INT id_region FK
+        INT id_continent FK
     }
-    country ||--|| continent : "references"
-    country ||--|| region : "references"
+
+    continent {
+        INT id_continent PK
+        STRING name
+    }
+
+    region {
+        INT id_region PK
+        STRING name
+    }
 
     climat_type {
-        SERIAL id_climat_type PK
+        INT id_climat_type PK
         STRING name
         STRING description
     }
 
     country_climat_type {
-        INTEGER id_climat_type PK
-        INTEGER id_country PK
+        INT id_climat_type PK, FK
+        INT id_country PK, FK
     }
-    country_climat_type ||--|| climat_type : "references"
+
+    users {
+        INT id_user PK
+        STRING firstname
+        STRING lastname
+        STRING email
+        STRING password
+        BOOLEAN isadmin
+    }
+
+    statement ||--|| disease : "references"
+    statement ||--|| country : "references"
+
+    prediction ||--|| disease : "references"
+    prediction ||--|| country : "references"
+
+    country ||--|| continent : "references"
+    country ||--|| region : "references"
+
     country_climat_type ||--|| country : "references"
+    country_climat_type ||--|| climat_type : "references"
 ```
