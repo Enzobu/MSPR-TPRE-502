@@ -1,35 +1,35 @@
-import type { TooltipItem } from "chart.js";
 import React from "react";
 import { Line } from "react-chartjs-2";
+import { type TooltipItem } from "chart.js";
 
-interface MortalityRateData {
+interface TransmissionRateData {
   [date: string]: number;
 }
 
-interface MortalityRateResponse {
+interface TransmissionRateResponse {
   country_id: string;
   disease_id: string;
   start_date: string;
   end_date: string;
-  mortality_rate: MortalityRateData[];
+  transmission_rate: TransmissionRateData[];
 }
 
-interface MortalityRateChartProps {
-  mortalityData: MortalityRateResponse;
+interface TransmissionRateChartProps {
+  transmissionRate: TransmissionRateResponse;
   countryName: string;
 }
 
-const MortalityRateChart: React.FC<MortalityRateChartProps> = ({
-  mortalityData,
+const TransmissionRateChart: React.FC<TransmissionRateChartProps> = ({
+  transmissionRate,
   countryName,
 }) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  console.log(mortalityData);
+  console.log(transmissionRate);
 
   // Transformer les données pour faciliter le traitement
-  const transformedData = mortalityData.mortality_rate.map((item) => {
+  const transformedData = transmissionRate.transmission_rate.map((item) => {
     const date = Object.keys(item)[0];
     const rate = Object.values(item)[0];
     return { date, rate };
@@ -45,9 +45,8 @@ const MortalityRateChart: React.FC<MortalityRateChartProps> = ({
       new Date(item.date).toLocaleDateString("fr-FR")
     ),
     datasets: [
-      // Données historiques (bleu)
       {
-        label: `Taux de mortalité historique - ${countryName}`,
+        label: `Données historiques - ${countryName}`,
         data: transformedData.map((item) => {
           const date = new Date(item.date);
           return date <= today ? item.rate : null;
@@ -60,9 +59,8 @@ const MortalityRateChart: React.FC<MortalityRateChartProps> = ({
         pointHoverRadius: 5,
         spanGaps: true,
       },
-      // Données futures (rouge)
       {
-        label: `Taux de mortalité prédit - ${countryName}`,
+        label: `Taux de transmission prédit - ${countryName}`,
         data: transformedData.map((item) => {
           const date = new Date(item.date);
           return date > today ? item.rate : null;
@@ -93,7 +91,7 @@ const MortalityRateChart: React.FC<MortalityRateChartProps> = ({
       },
       title: {
         display: true,
-        text: `Évolution du taux de mortalité - ${countryName}`,
+        text: `Évolution du taux de transmission - ${countryName}`,
         font: {
           size: 16,
           weight: "bold" as const,
@@ -109,7 +107,7 @@ const MortalityRateChart: React.FC<MortalityRateChartProps> = ({
         beginAtZero: true,
         title: {
           display: true,
-          text: "Taux de mortalité",
+          text: "Taux de transmission",
         },
         ticks: {
           callback: function (value: any) {
@@ -127,10 +125,10 @@ const MortalityRateChart: React.FC<MortalityRateChartProps> = ({
   };
 
   return (
-    <div className="w-full h-96 mt-8">
+    <div className="w-full h-96 mt-8" data-testid="prediction-chart-container">
       <Line data={chartData} options={options} />
     </div>
   );
 };
 
-export default MortalityRateChart;
+export default TransmissionRateChart;

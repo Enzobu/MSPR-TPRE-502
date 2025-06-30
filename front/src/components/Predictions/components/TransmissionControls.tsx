@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-interface PredictionsControlsProps {
+interface TransmissionControlsProps {
   startDate: string;
   endDate: string;
   setStartDate: (date: string) => void;
@@ -25,7 +25,7 @@ interface PredictionsControlsProps {
   disabled: boolean;
 }
 
-const PredictionsControls: React.FC<PredictionsControlsProps> = ({
+const TransmissionControls: React.FC<TransmissionControlsProps> = ({
   startDate,
   endDate,
   setStartDate,
@@ -209,4 +209,4 @@ const PredictionsControls: React.FC<PredictionsControlsProps> = ({
   );
 };
 
-export default PredictionsControls; 
+export default TransmissionControls; 
