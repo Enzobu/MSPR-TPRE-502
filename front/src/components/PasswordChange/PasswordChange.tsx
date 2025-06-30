@@ -84,7 +84,7 @@ const PasswordChange = () => {
             value={formData.oldPassword}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 text-red-500 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
+            className="bg-transparent w-full border border-gray-300 text-white-500 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
           />
         </div>
 
@@ -99,7 +99,7 @@ const PasswordChange = () => {
             value={formData.newPassword}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 text-green-500 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
+            className="bg-transparent w-full border border-gray-300 text-white-500 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
           />
         </div>
 
@@ -114,7 +114,7 @@ const PasswordChange = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 text-green-500 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
+            className="bg-transparent w-full border border-gray-300 text-white-500 rounded-lg p-2 focus:outline-none focus:ring focus:ring-gray-300"
           />
         </div>
 
