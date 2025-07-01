@@ -18,7 +18,7 @@ describe('useTransmission', () => {
   it('devrait initialiser avec des valeurs par défaut', () => {
     const { result } = renderHook(() => useTransmission());
 
-    expect(result.current.transmissionRate).toEqual([]);
+    expect(result.current.transmissionRate).toEqual(null);
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
     expect(typeof result.current.fetchTransmissionRate).toBe('function');
