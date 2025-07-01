@@ -1,6 +1,5 @@
 import { Switch } from '@/components/ui/switch';
 
-
 const Settings = () => {
   return (
     <div className="max-w-md mx-auto mt-10 p-6 rounded-xl shadow-md">
@@ -11,14 +10,14 @@ const Settings = () => {
           <label htmlFor="notifications" className="font-medium">
             Notifications :
           </label>
-          <Switch/>
+          <Switch id="notifications" />
         </div>
 
         <div className="flex items-center justify-between">
           <label htmlFor="darkTheme" className="font-medium">
             Thème sombre :
           </label>
-          <Switch/>
+          <Switch id="darkTheme" />
         </div>
 
         <button
@@ -30,7 +29,6 @@ const Settings = () => {
         </button>
       </form>
     </div>
-
   );
 };
 

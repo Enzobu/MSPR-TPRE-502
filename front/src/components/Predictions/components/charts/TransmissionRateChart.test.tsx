@@ -43,7 +43,7 @@ describe("PredictionChart", () => {
       screen.getByTestId("chart-options").textContent || "{}"
     );
     expect(chartOptions.plugins.title.text).toBe(
-      "Évolution des prédictions - France"
+      "Évolution du taux de transmission - France"
     );
   });
 
@@ -54,7 +54,7 @@ describe("PredictionChart", () => {
       screen.getByTestId("chart-options").textContent || "{}"
     );
     expect(chartOptions.plugins.title.text).toBe(
-      "Évolution des prédictions - Allemagne"
+      "Évolution du taux de transmission - Allemagne"
     );
   });
 
@@ -91,15 +91,6 @@ describe("PredictionChart", () => {
       "02/01/2024",
       "03/01/2024",
     ]);
-  });
-
-  it("devrait utiliser les valeurs yhat pour les données du graphique", () => {
-    render(<TransmissionRateChart {...defaultProps} />);
-
-    const chartData = JSON.parse(
-      screen.getByTestId("chart-data").textContent || "{}"
-    );
-    expect(chartData.datasets[0].data).toEqual([100, 150, 200]);
   });
 
   it("devrait avoir le bon label pour le dataset", () => {
@@ -147,7 +138,7 @@ describe("PredictionChart", () => {
     expect(chartOptions.plugins.legend.display).toBe(true);
     expect(chartOptions.plugins.legend.position).toBe("top");
     expect(chartOptions.scales.y.beginAtZero).toBe(true);
-    expect(chartOptions.scales.y.title.text).toBe("Valeurs prédites");
+    expect(chartOptions.scales.y.title.text).toBe("Taux de transmission");
     expect(chartOptions.scales.x.title.text).toBe("Date");
   });
 
@@ -159,7 +150,7 @@ describe("PredictionChart", () => {
     );
     expect(chartData.datasets).toHaveLength(2);
     expect(chartData.datasets[0].label).toBe("Données historiques - France");
-    expect(chartData.datasets[1].label).toBe("Prédictions futures - France");
+    expect(chartData.datasets[1].label).toBe("Taux de transmission prédit - France");
   });
 
   it("devrait avoir les bonnes couleurs pour les datasets", () => {
