@@ -26,24 +26,26 @@ error_model = metric_namespace.model('ErrorResponse', {
 })
 
 
-@metric_namespace.route('/metrics/get/<int:country_id>')
+@metric_namespace.route('/metrics/get')
 class MetricsByCountryResource(Resource):
 
     @jwt_required()
     @metric_namespace.response(200, 'Succès', metrics_response_model)
     @metric_namespace.response(400, 'Requête invalide', error_model)
     @metric_namespace.response(500, 'Erreur serveur', error_model)
-    def get(self, country_id):
+    def get(self):
         """
         Récupère les métriques d'un pays et les moyennes R² et R² bis du continent correspondant.
         """
-        def to_float(val):
-            if isinstance(val, Decimal):
-                return float(val)
-            return val
-
-        conn = get_db_connection()
         try:
+            id_country = request.args.get('id_country')
+
+            def to_float(val):
+                if isinstance(val, Decimal):
+                    return float(val)
+                return val
+
+            conn = get_db_connection()
             with conn.cursor() as cur:
                 # Récupérer la dernière métrique du pays
                 cur.execute("""
@@ -55,7 +57,7 @@ class MetricsByCountryResource(Resource):
                     WHERE c.id_country = %s
                     ORDER BY m._date DESC
                     LIMIT 1
-                """, (country_id,))
+                """, (id_country,))
                 metric_row = cur.fetchone()
 
                 if not metric_row:
@@ -73,18 +75,18 @@ class MetricsByCountryResource(Resource):
                 """, (continent_name,))
                 avg_result = cur.fetchone()
 
-                continent_r2 = round(to_float(avg_result[0]), 2) if avg_result[0] is not None else None
-                continent_r2_bis = round(to_float(avg_result[1]), 2) if avg_result[1] is not None else None
+                continent_r2 = round(to_float(avg_result[0]), 4) if avg_result[0] is not None else None
+                continent_r2_bis = round(to_float(avg_result[1]), 4) if avg_result[1] is not None else None
 
             return {
                 "id_metrics": id_metrics,
                 "_date": _date.strftime("%Y-%m-%d") if hasattr(_date, "strftime") else _date,
                 "rmse": to_float(rmse),
                 "mae": to_float(mae),
-                "r2": to_float(r2),
+                "r2": round(to_float(r2), 4) if r2 is not None else None,
                 "rmse_bis": to_float(rmse_bis),
                 "mae_bis": to_float(mae_bis),
-                "r2_bis": to_float(r2_bis),
+                "r2_bis": round(to_float(r2_bis), 4) if r2_bis is not None else None,
                 "continent": continent_name,
                 "continent_r2": continent_r2,
                 "continent_r2_bis": continent_r2_bis
