@@ -7,12 +7,14 @@ import { getFlagEmojiFromIso3 } from '../../../utils/flagUtils';
 import { countryTranslations } from '../../../data/countryTranslations';
 import { capitalize } from '../utils/capitalize';
 import type { Country } from '../../../types/types';
+import type { Metrics } from '../hooks/useMetrics';
 
 interface CountrySummaryProps {
   country: Country;
+  metrics?: Metrics | null;
 }
 
-const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
+const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => {
   const formatNumber = (num: string | undefined) => {
     if (!num) return 'N/A';
     return new Intl.NumberFormat('fr-FR').format(Number(num));
@@ -141,24 +143,30 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
             <Activity className="h-4 w-4 text-muted-foreground" />
             <h3 className="font-semibold">Métriques</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="justify-self-start">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+            <div>
               <span className="font-medium">RMSE:</span>{' '}
               <span className="text-muted-foreground">
-                {country.latitude ? Number(country.latitude).toFixed(4) : 'N/A'}°N, {country.longitude ? Number(country.longitude).toFixed(4) : 'N/A'}°E
+                {metrics ? metrics.rmse : 'N/A'}
               </span>
             </div>
-            <div className="justify-self-center">
+            <div>
               <span className="font-medium">MAE:</span>{' '}
-              <Badge variant="secondary" className="ml-1">
-                {country.iso_code}
-              </Badge>
+              <span className="text-muted-foreground">
+                {metrics ? metrics.mae : 'N/A'}
+              </span>
             </div>
-            <div className="justify-self-end">
+            <div>
               <span className="font-medium">R2:</span>{' '}
-              <Badge variant="secondary" className="ml-1">
-                {country.iso_code}
-              </Badge>
+              <span className="text-muted-foreground">
+                {metrics ? metrics.r2 : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">R2 Continent:</span>{' '}
+              <span className="text-muted-foreground">
+                {metrics ? metrics.continent_r2 : 'N/A'}
+              </span>
             </div>
           </div>
           <br />
@@ -168,29 +176,32 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
             <h3 className="font-semibold">Métriques "bis" <span className="text-xs text-muted-foreground">(basés uniquement sur les données à partir de 2022)</span></h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="justify-self-start">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+            <div>
               <span className="font-medium">RMSE bis:</span>{' '}
               <span className="text-muted-foreground">
-                {country.latitude ? Number(country.latitude).toFixed(4) : 'N/A'}°N, {country.longitude ? Number(country.longitude).toFixed(4) : 'N/A'}°E
+                {metrics ? metrics.rmse_bis : 'N/A'}
               </span>
             </div>
-            <div className="justify-self-center">
+            <div>
               <span className="font-medium">MAE bis:</span>{' '}
-              <Badge variant="secondary" className="ml-1">
-                {country.iso_code}
-              </Badge>
+              <span className="text-muted-foreground">
+                {metrics ? metrics.mae_bis : 'N/A'}
+              </span>
             </div>
-            <div className="justify-self-end">
+            <div>
               <span className="font-medium">R2 bis:</span>{' '}
-              <Badge variant="secondary" className="ml-1">
-                {country.iso_code}
-              </Badge>
+              <span className="text-muted-foreground">
+                {metrics ? metrics.r2_bis : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">R2 Continent bis:</span>{' '}
+              <span className="text-muted-foreground">
+                {metrics ? metrics.continent_r2_bis : 'N/A'}
+              </span>
             </div>
           </div>
-          
-
-
         </div>
       </CardContent>
     </Card>
