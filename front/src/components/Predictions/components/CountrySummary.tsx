@@ -8,6 +8,7 @@ import { countryTranslations } from '../../../data/countryTranslations';
 import { capitalize, capitalizeEachWord } from '../utils/capitalize';
 import type { Country } from '../../../types/types';
 import type { Metrics } from '../hooks/useMetrics';
+import { formatNumberWithSpaces } from '../utils/numbers';
 
 interface CountrySummaryProps {
   country: Country;
@@ -147,13 +148,13 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => 
             <div>
               <span className="font-medium">RMSE:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.rmse : 'N/A'}
+                {metrics ? formatNumberWithSpaces(metrics.rmse) : 'N/A'}
               </span>
             </div>
             <div>
               <span className="font-medium">MAE:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.mae : 'N/A'}
+                {metrics ? formatNumberWithSpaces(metrics.mae) : 'N/A'}
               </span>
             </div>
             <div>
@@ -180,13 +181,13 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => 
             <div>
               <span className="font-medium">RMSE bis:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.rmse_bis : 'N/A'}
+                {metrics ? formatNumberWithSpaces(metrics.rmse_bis) : 'N/A'}
               </span>
             </div>
             <div>
               <span className="font-medium">MAE bis:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.mae_bis : 'N/A'}
+                {metrics ? formatNumberWithSpaces(metrics.mae_bis) : 'N/A'}
               </span>
             </div>
             <div>
