@@ -2,17 +2,19 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { MapPin, Users, DollarSign, Globe, Flag } from 'lucide-react';
+import { MapPin, Users, DollarSign, Globe, Flag, Activity } from 'lucide-react';
 import { getFlagEmojiFromIso3 } from '../../../utils/flagUtils';
 import { countryTranslations } from '../../../data/countryTranslations';
-import { capitalize } from '../utils/capitalize';
+import { capitalize, capitalizeEachWord } from '../utils/capitalize';
 import type { Country } from '../../../types/types';
+import type { Metrics } from '../hooks/useMetrics';
 
 interface CountrySummaryProps {
   country: Country;
+  metrics?: Metrics | null;
 }
 
-const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
+const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => {    
   const formatNumber = (num: string | undefined) => {
     if (!num) return 'N/A';
     return new Intl.NumberFormat('fr-FR').format(Number(num));
@@ -51,7 +53,7 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
           </CardTitle>
           <Badge variant="outline" className="flex items-center space-x-1">
             <Globe className="h-3 w-3" />
-            <span>Pays</span>
+            <span>Continent : {metrics ? capitalizeEachWord(metrics.continent) : "N/A"}</span>
           </Badge>
         </div>
       </CardHeader>
@@ -131,6 +133,73 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
               <Badge variant="secondary" className="ml-1">
                 {country.iso_code}
               </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* METRICS */}
+        <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+          <div className="flex items-center space-x-2 mb-3">
+            <Activity className="h-4 w-4 text-muted-foreground" />
+            <h3 className="font-semibold">Métriques</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="font-medium">RMSE:</span>{' '}
+              <span className="text-muted-foreground">
+                {metrics ? metrics.rmse : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">MAE:</span>{' '}
+              <span className="text-muted-foreground">
+                {metrics ? metrics.mae : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">R2 Pays:</span>{' '}
+              <span className="text-muted-foreground">
+              {metrics ? (metrics.r2 * 100).toFixed(2) + ' %' : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">R2 Continent:</span>{' '}
+              <span className="text-muted-foreground">
+              {metrics ? (metrics.continent_r2 * 100).toFixed(2) + ' %' : 'N/A'}
+              </span>
+            </div>
+          </div>
+          <br />
+
+          <div className="flex items-center space-x-2 mb-3">
+            <Activity className="h-4 w-4 text-muted-foreground" />
+            <h3 className="font-semibold">Métriques "bis" <span className="text-xs text-muted-foreground">(basés uniquement sur les données à partir de 2022)</span></h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="font-medium">RMSE bis:</span>{' '}
+              <span className="text-muted-foreground">
+                {metrics ? metrics.rmse_bis : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">MAE bis:</span>{' '}
+              <span className="text-muted-foreground">
+                {metrics ? metrics.mae_bis : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">R2 Pays bis:</span>{' '}
+              <span className="text-muted-foreground">
+              {metrics ? (metrics.r2_bis * 100).toFixed(2) + ' %' : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <span className="font-medium">R2 Continent bis:</span>{' '}
+              <span className="text-muted-foreground">
+              {metrics ? (metrics.continent_r2_bis * 100).toFixed(2) + ' %' : 'N/A'}
+              </span>
             </div>
           </div>
         </div>

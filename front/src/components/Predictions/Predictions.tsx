@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +28,7 @@ import TransmissionRateChart from "./components/charts/TransmissionRateChart";
 import MortalityRateChart from "./components/charts/MortalityRateChart";
 import TransmissionControls from "./components/TransmissionControls";
 import Layout from "../Layout/Layout";
+import { useMetrics } from "./hooks/useMetrics";
 
 ChartJS.register(
   CategoryScale,
@@ -53,6 +54,12 @@ const Transmission: React.FC = () => {
     error: mortalityError,
     fetchMortalityRate,
   } = useMortalityRate();
+  const {
+    metrics,
+    loading: metricsLoading,
+    error: metricsError,
+    fetchMetrics,
+  } = useMetrics();
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
@@ -75,6 +82,12 @@ const Transmission: React.FC = () => {
     fetchTransmissionRate(startDate, endDate, countryId);
     fetchMortalityRate(startDate, endDate, countryId);
   };
+
+  useEffect(() => {
+    if (selectedCountry) {
+      fetchMetrics(selectedCountry);
+    }
+  }, [selectedCountry]);
 
   return (
     <Layout>
@@ -130,7 +143,14 @@ const Transmission: React.FC = () => {
             <div className="space-y-6">
               {/* Résumé du pays */}
               {selectedCountryData && (
-                <CountrySummary country={selectedCountryData} />
+                <CountrySummary country={selectedCountryData} metrics={metrics} />
+              )}
+              {/* Affichage d'un état de chargement ou d'erreur pour les métriques */}
+              {metricsLoading && (
+                <div className="text-center text-muted-foreground">Chargement des métriques...</div>
+              )}
+              {metricsError && (
+                <div className="text-center text-destructive">Erreur métriques : {metricsError}</div>
               )}
 
               {/* Graphique des prédictions */}
