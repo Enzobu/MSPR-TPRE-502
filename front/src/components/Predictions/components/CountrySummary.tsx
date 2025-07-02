@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { MapPin, Users, DollarSign, Globe, Flag, Activity } from 'lucide-react';
 import { getFlagEmojiFromIso3 } from '../../../utils/flagUtils';
 import { countryTranslations } from '../../../data/countryTranslations';
-import { capitalize } from '../utils/capitalize';
+import { capitalize, capitalizeEachWord } from '../utils/capitalize';
 import type { Country } from '../../../types/types';
 import type { Metrics } from '../hooks/useMetrics';
 
@@ -14,7 +14,7 @@ interface CountrySummaryProps {
   metrics?: Metrics | null;
 }
 
-const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => {
+const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => {    
   const formatNumber = (num: string | undefined) => {
     if (!num) return 'N/A';
     return new Intl.NumberFormat('fr-FR').format(Number(num));
@@ -53,7 +53,7 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => 
           </CardTitle>
           <Badge variant="outline" className="flex items-center space-x-1">
             <Globe className="h-3 w-3" />
-            <span>Continent : AFRIQUE</span>
+            <span>Continent : {metrics ? capitalizeEachWord(metrics.continent) : "N/A"}</span>
           </Badge>
         </div>
       </CardHeader>
@@ -157,15 +157,15 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => 
               </span>
             </div>
             <div>
-              <span className="font-medium">R2:</span>{' '}
+              <span className="font-medium">R2 Pays:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.r2 : 'N/A'}
+              {metrics ? (metrics.r2 * 100).toFixed(2) + ' %' : 'N/A'}
               </span>
             </div>
             <div>
               <span className="font-medium">R2 Continent:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.continent_r2 : 'N/A'}
+              {metrics ? (metrics.continent_r2 * 100).toFixed(2) + ' %' : 'N/A'}
               </span>
             </div>
           </div>
@@ -190,15 +190,15 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country, metrics }) => 
               </span>
             </div>
             <div>
-              <span className="font-medium">R2 bis:</span>{' '}
+              <span className="font-medium">R2 Pays bis:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.r2_bis : 'N/A'}
+              {metrics ? (metrics.r2_bis * 100).toFixed(2) + ' %' : 'N/A'}
               </span>
             </div>
             <div>
               <span className="font-medium">R2 Continent bis:</span>{' '}
               <span className="text-muted-foreground">
-                {metrics ? metrics.continent_r2_bis : 'N/A'}
+              {metrics ? (metrics.continent_r2_bis * 100).toFixed(2) + ' %' : 'N/A'}
               </span>
             </div>
           </div>
