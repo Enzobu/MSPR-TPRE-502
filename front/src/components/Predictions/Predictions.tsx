@@ -138,13 +138,13 @@ const Transmission: React.FC = () => {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
-                      <span>Évolution des prédictions</span>
+                      <span>Évolution du taux de transmissions</span>
                       <Badge variant="outline">
                         {transmissionRate.transmission_rate.length} points de données
                       </Badge>
                     </CardTitle>
                     <CardDescription>
-                      Visualisation des prédictions pour {selectedCountryNameFr}
+                      Visualisation du taux de transmission pour {selectedCountryNameFr}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
