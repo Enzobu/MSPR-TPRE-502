@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { MapPin, Users, DollarSign, Globe, Flag } from 'lucide-react';
+import { MapPin, Users, DollarSign, Globe, Flag, Activity } from 'lucide-react';
 import { getFlagEmojiFromIso3 } from '../../../utils/flagUtils';
 import { countryTranslations } from '../../../data/countryTranslations';
 import { capitalize } from '../utils/capitalize';
@@ -51,7 +51,7 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
           </CardTitle>
           <Badge variant="outline" className="flex items-center space-x-1">
             <Globe className="h-3 w-3" />
-            <span>Pays</span>
+            <span>Continent : AFRIQUE</span>
           </Badge>
         </div>
       </CardHeader>
@@ -133,6 +133,64 @@ const CountrySummary: React.FC<CountrySummaryProps> = ({ country }) => {
               </Badge>
             </div>
           </div>
+        </div>
+
+        {/* METRICS */}
+        <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+          <div className="flex items-center space-x-2 mb-3">
+            <Activity className="h-4 w-4 text-muted-foreground" />
+            <h3 className="font-semibold">Métriques</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="justify-self-start">
+              <span className="font-medium">RMSE:</span>{' '}
+              <span className="text-muted-foreground">
+                {country.latitude ? Number(country.latitude).toFixed(4) : 'N/A'}°N, {country.longitude ? Number(country.longitude).toFixed(4) : 'N/A'}°E
+              </span>
+            </div>
+            <div className="justify-self-center">
+              <span className="font-medium">MAE:</span>{' '}
+              <Badge variant="secondary" className="ml-1">
+                {country.iso_code}
+              </Badge>
+            </div>
+            <div className="justify-self-end">
+              <span className="font-medium">R2:</span>{' '}
+              <Badge variant="secondary" className="ml-1">
+                {country.iso_code}
+              </Badge>
+            </div>
+          </div>
+          <br />
+
+          <div className="flex items-center space-x-2 mb-3">
+            <Activity className="h-4 w-4 text-muted-foreground" />
+            <h3 className="font-semibold">Métriques "bis" <span className="text-xs text-muted-foreground">(basés uniquement sur les données à partir de 2022)</span></h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="justify-self-start">
+              <span className="font-medium">RMSE bis:</span>{' '}
+              <span className="text-muted-foreground">
+                {country.latitude ? Number(country.latitude).toFixed(4) : 'N/A'}°N, {country.longitude ? Number(country.longitude).toFixed(4) : 'N/A'}°E
+              </span>
+            </div>
+            <div className="justify-self-center">
+              <span className="font-medium">MAE bis:</span>{' '}
+              <Badge variant="secondary" className="ml-1">
+                {country.iso_code}
+              </Badge>
+            </div>
+            <div className="justify-self-end">
+              <span className="font-medium">R2 bis:</span>{' '}
+              <Badge variant="secondary" className="ml-1">
+                {country.iso_code}
+              </Badge>
+            </div>
+          </div>
+          
+
+
         </div>
       </CardContent>
     </Card>
